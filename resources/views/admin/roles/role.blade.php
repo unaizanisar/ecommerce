@@ -4,7 +4,9 @@
 <div class="container">
     <h2>Roles Listing</h2>
     <div class="text-end">
+        @if(auth()->user()->hasPermission('Role Add'))
         <a href="{{ route('roles.create') }}" class="btn btn-success">Add New Role</a>
+        @endif
     </div>
     <br>
     <div class="table-responsive table--no-card m-b-40">
@@ -31,18 +33,26 @@
                     @endif
                 </td>
                 <td>
+                @if(auth()->user()->hasPermission('Role Detail'))
                     <a href="{{ route('roles.show',$role->id) }}" class="btn btn-sm btn-info" title="Details"><i class="fa fa-eye"></i></a> <span style="color:grey">|</span>
+                @endif
+                @if(auth()->user()->hasPermission('Role Edit'))
                     <a href="{{ route('roles.edit',$role->id) }}" class="btn btn-sm btn-primary" title="Edit"><i class="fa fa-pen"></i></a> <span style="color:grey">|</span>
+                @endif
+                @if(auth()->user()->hasPermission('Role Delete'))
                     <form action="{{ route('roles.destroy', $role->id) }}" method="POST" style="display: inline">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick = "return confirm('Are you sure you want to delete this role?');"><i class="fa fa-trash"></i></button>
                     </form> <span style="color:grey">|</span>
+                @endif
+                @if(auth()->user()->hasPermission('Role Change Status'))
                     @if($role->status==1)
                         <a href="{{ route('roles.updateStatus', ['id' => $role->id, 'status' => 0]) }}" class="btn btn-sm btn-danger" title="In-Active" onclick = "return confirm('Are you sure you want to de-activate this role?');"><i class="fa fa-user-slash"></i></a>
                     @else
                         <a href = "{{ route('roles.updateStatus', ['id' => $role->id, 'status' => 1]) }}"class="btn btn-sm btn-success" title="Active" onclick = "return confirm('Are you sure you want to activate this role?');"><i class="fa fa-user-check"></i></a>
                     @endif
+                @endif
                 </td>
             </tr>
             @empty

@@ -34,9 +34,11 @@
                             {{ Auth::user()->fullname }} <span class="caret"></span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            @if(auth()->user()->hasPermission('Profile View'))
                             <a class="dropdown-item" href="{{ route('profile.show', ['profile' => Auth::user()->id]) }}">
                                 {{ __('Profile') }}
-                            </a>                            
+                            </a>    
+                            @endif                        
                             <a class="dropdown-item" href="{{ route('logout') }}"
                                onclick="event.preventDefault();
                                              document.getElementById('logout-form').submit();">

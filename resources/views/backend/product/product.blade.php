@@ -4,7 +4,9 @@
 <div class="container">
     <h2>Products Listing</h2>
     <div class="text-end">
+        @if(auth()->user()->hasPermission('Product Add'))
         <a href="{{ route('products.create') }}" class="btn btn-success">Add New Product</a>
+        @endif
     </div>
     <br> 
     <div class="table-responsive table--no-card m-b-40" style="max-height: 600px; overflow-y: auto;">
@@ -47,29 +49,41 @@
                     @endif
                 </td>
                 <td>
+                    @if(auth()->user()->hasPermission('Product Detail'))
                     <a href="{{ route('products.show',$product->id) }}" class="btn btn-sm btn-info" title="Details"><i class="fa fa-eye"></i></a> <span style="color:grey">|</span>
+                    @endif
+                    @if(auth()->user()->hasPermission('Product Edit'))
                     <a href="{{ route('products.edit',$product->id) }}" class="btn btn-sm btn-primary" title="Edit"><i class="fa fa-pen"></i></a> <span style="color:grey">|</span>
+                    @endif
+                    @if(auth()->user()->hasPermission('Product Delete'))
                     <form action="{{ route('products.destroy', $product->id) }}" method="POST" style="display: inline">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick = "return confirm('Are you sure you want to delete this product?');"><i class="fa fa-trash"></i></button>
                     </form> <span style="color:grey">|</span>
-                    @if($product->status==1)
-                        <a href="{{ route('products.updateStatus', ['id' => $product->id, 'status' => 0]) }}" class="btn btn-sm btn-danger" title="In-Active" onclick = "return confirm('Are you sure you want to de-activate this product?');"><i class="fa fa-user-slash"></i></a>
-                    @else
-                        <a href = "{{ route('products.updateStatus', ['id' => $product->id, 'status' => 1]) }}"class="btn btn-sm btn-success" title="Active" onclick = "return confirm('Are you sure you want to activate this product?');"><i class="fa fa-user-check"></i></a>
                     @endif
-                    <span style="color:grey">|</span>
-                    @if($product->is_featured==1)
-                        <a href="{{ route('products.updateFeatured', ['id' => $product->id, 'is_featured' => 0]) }}" class="btn btn-sm btn-warning" title="Un-Feature" onclick = "return confirm('Are you sure you want to remove this product from featured?');"><i class="fa-solid fa-toggle-on"></i></a>
-                    @else
-                        <a href = "{{ route('products.updateFeatured', ['id' => $product->id, 'is_featured' => 1]) }}"class="btn btn-sm btn-warning" title="Feature" onclick = "return confirm('Are you sure you want to feature this product?');"><i class="fa-solid fa-toggle-off"></i></a>
+                    @if(auth()->user()->hasPermission('Product Change Status'))
+                        @if($product->status==1)
+                            <a href="{{ route('products.updateStatus', ['id' => $product->id, 'status' => 0]) }}" class="btn btn-sm btn-danger" title="In-Active" onclick = "return confirm('Are you sure you want to de-activate this product?');"><i class="fa fa-user-slash"></i></a>
+                        @else
+                            <a href = "{{ route('products.updateStatus', ['id' => $product->id, 'status' => 1]) }}"class="btn btn-sm btn-success" title="Active" onclick = "return confirm('Are you sure you want to activate this product?');"><i class="fa fa-user-check"></i></a>
+                        @endif
+                        <span style="color:grey">|</span>
                     @endif
-                    <span style="color:grey">|</span>
-                    @if($product->is_home==1)
-                        <a href="{{ route('products.updateHome', ['id' => $product->id, 'is_home' => 0]) }}" class="btn btn-sm btn-secondary" title="Remove from home" onclick = "return confirm('Are you sure you want to remove this product from home?');"><i class="fa-solid fa-house-circle-xmark"></i></a>
-                    @else
-                        <a href = "{{ route('products.updateHome', ['id' => $product->id, 'is_home' => 1]) }}"class="btn btn-sm btn-secondary" title="Add on home screen" onclick = "return confirm('Are you sure you want to add this product to home?');"><i class="fa-solid fa-house-laptop"></i></a>
+                    @if(auth()->user()->hasPermission('Feature Product'))
+                        @if($product->is_featured==1)
+                            <a href="{{ route('products.updateFeatured', ['id' => $product->id, 'is_featured' => 0]) }}" class="btn btn-sm btn-warning" title="Un-Feature" onclick = "return confirm('Are you sure you want to remove this product from featured?');"><i class="fa-solid fa-toggle-on"></i></a>
+                        @else
+                            <a href = "{{ route('products.updateFeatured', ['id' => $product->id, 'is_featured' => 1]) }}"class="btn btn-sm btn-warning" title="Feature" onclick = "return confirm('Are you sure you want to feature this product?');"><i class="fa-solid fa-toggle-off"></i></a>
+                        @endif
+                        <span style="color:grey">|</span>
+                    @endif
+                    @if(auth()->user()->hasPermission('Home Product'))
+                        @if($product->is_home==1)
+                            <a href="{{ route('products.updateHome', ['id' => $product->id, 'is_home' => 0]) }}" class="btn btn-sm btn-secondary" title="Remove from home" onclick = "return confirm('Are you sure you want to remove this product from home?');"><i class="fa-solid fa-house-circle-xmark"></i></a>
+                        @else
+                            <a href = "{{ route('products.updateHome', ['id' => $product->id, 'is_home' => 1]) }}"class="btn btn-sm btn-secondary" title="Add on home screen" onclick = "return confirm('Are you sure you want to add this product to home?');"><i class="fa-solid fa-house-laptop"></i></a>
+                        @endif
                     @endif
                 </td>
             </tr>

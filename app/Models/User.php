@@ -48,11 +48,23 @@ class User extends Authenticatable
 
     public function role()
     {
-        return $this->belongsTo(Role::class, 'role_id');
+        return $this->belongsTo(Role::class);
     }
+    
+    public function permissions()
+    {
+        return $this->hasManyThrough(Permission::class, RoleHasPermission::class, 'role_id', 'id', 'role_id', 'permission_id');
+    }
+    
 
     public function getFullnameAttribute()
     {
         return $this->firstname . ' ' . $this->lastname;
     }
+    public function hasPermission($permissionName)
+{
+    return $this->role->permissions->contains('name', $permissionName);
+}
+
+    
 }

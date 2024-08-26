@@ -7,7 +7,7 @@
         <div class="row">
             <div class="profile-nav col-md-3">
                 <br>
-                <div class="panel">
+                <div class="panel"> 
                     <div class="user-heading round" style = "text-align: center">
                         <a href="#">
                             @if ($profile->profile_photo)
@@ -24,12 +24,14 @@
                                 onmouseout="this.style.color='#333';">
                                 <i class="fa fa-user"></i> Profile
                             </a> <br>
+                            @if(auth()->user()->hasPermission('Profile Edit'))
                             <a href="{{ route('profile.edit', ['id' => auth()->user()->id]) }}" 
                                 style="color:#666; text-decoration:none;" 
                                 onmouseover="this.style.color='#333';" 
                                 onmouseout="this.style.color='#666';">
                                 <i class="fa fa-pen"></i> Edit
-                             </a>                             
+                             </a>   
+                            @endif                          
                         </div>
       </div>
   </div>

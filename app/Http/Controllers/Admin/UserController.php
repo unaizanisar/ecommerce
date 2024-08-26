@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 use App\Interfaces\UserRepositoryInterface;
 use Illuminate\Support\Facades\Validator;
+
 class UserController extends Controller
 {
     protected $userRepository;
@@ -20,21 +21,34 @@ class UserController extends Controller
     }
     public function index()
     {
-        $users =  $this->userRepository->getAllUsers();
-        return view('admin.users.user',compact('users'));
+        if (!auth()->user()->hasPermission('User Listing')) {
+            return redirect()->route('dashboard')->with('error', 'You do not have permission to view Users Listing!');
+        }
+        $users = $this->userRepository->getAllUsers();
+        return view('admin.users.user', compact('users'));
     }
+    
     public function show($id)
     {
+        if (!auth()->user()->hasPermission('User Detail')) {
+            return redirect()->route('users.index')->with('error', 'You do not have permission to view User Details!');
+        }
         $user = $this->userRepository->getUsersbyId($id);
         return view('admin.users.show', compact('user'));
     }
     public function create()
     {
+        if (!auth()->user()->hasPermission('User Add')) {
+            return redirect()->route('users.index')->with('error', 'You do not have permission to Add User!');
+        }
         $roles = $this->userRepository->getAllRoles();
         return view('admin.users.create', compact('roles'));
     }
     public function store(Request $request)
     {
+        if (!auth()->user()->hasPermission('User Add')) {
+            return redirect()->route('users.index')->with('error', 'You do not have permission to Add User!');
+        }
         $validator = Validator::make($request->all(), [
             'firstname' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
@@ -65,6 +79,9 @@ class UserController extends Controller
     }
     public function destroy($id)
     {
+        if (!auth()->user()->hasPermission('User Delete')) {
+            return redirect()->route('users.index')->with('error', 'You do not have permission to Delete User!');
+        }
         $user = $this->userRepository->deleteUser($id);
         if(!$user)
         {
@@ -74,17 +91,26 @@ class UserController extends Controller
     }
     public function updateStatus($id, $status)
     {
+        if (!auth()->user()->hasPermission('User Change Status')) {
+            return redirect()->route('users.index')->with('error', 'You do not have permission to Change User Status!');
+        }
         $user = $this->userRepository->updateUserStatus($id, $status);
         return redirect()->route('users.index')->with('success', $status == 1 ? 'User activated successfully.' : 'User deactivated successfully.');
     }
     public function edit($id)
     {
+        if (!auth()->user()->hasPermission('User Edit')) {
+            return redirect()->route('users.index')->with('error', 'You do not have permission to Edit User!');
+        }
         $user = $this->userRepository->getUsersbyId($id);
         $roles = $this->userRepository->getAllRoles();
         return view('admin.users.edit', compact('user', 'roles'));
     }
     public function update($id, Request $request)
     {
+        if (!auth()->user()->hasPermission('User Edit')) {
+            return redirect()->route('users.index')->with('error', 'You do not have permission to Edit User!');
+        }
         $validatedData = $request->validate([
             'firstname' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',

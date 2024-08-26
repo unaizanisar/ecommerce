@@ -9,7 +9,7 @@
             <div class="col-md-12">
                 <div class="checkout-area">
                     
-                    <form action="{{ route('cart.placeOrder') }}" method="POST">
+                    <form action="{{ route('cart.placeOrder') }}" method="POST"> 
                         @csrf
                         <div class="row">
                             <div class="col-md-6">

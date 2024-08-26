@@ -20,16 +20,28 @@ class OrderRepository implements OrderRepositoryInterface
     public function createOrder(array $data)
     {
         $order = new Order();
-        $order->order_details = $data['order_details'];
-        $order->payment_information = $data['payment_information'];
+        $order->firstname = $data['firstname'];
+        $order->lastname = $data['lastname'];
+        $order->email = $data['email'];
+        $order->city = $data['city'];
+        $order->postal_code = $data['postal_code'];
+        $order->address = $data['address'];
+        $order->phone = $data['phone'];
+        $order->total = $data['total'];
         $order->save();
         return $order;
     }
     public function updateOrder($id, array $data)
     {
         $order = Order::findOrFail($id);
-        $order->order_details = $data['order_details'];
-        $order->payment_information = $data['payment_information'];
+        $order->firstname = $data['firstname'];
+        $order->lastname = $data['lastname'];
+        $order->email = $data['email'];
+        $order->city = $data['city'];
+        $order->postal_code = $data['postal_code'];
+        $order->address = $data['address'];
+        $order->phone = $data['phone'];
+        $order->total = $data['total'];
         $order->save();
         return $order;
     }

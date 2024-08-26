@@ -76,8 +76,8 @@ class CartController extends Controller
             'firstname' => 'required|string',
             'lastname' => 'required|string',
             'email'  => 'required|string',
-            'address' => 'required|string',
             'phone' => 'required|string',
+            'address' => 'required|string',
             'city' => 'required|string',
             'postal_code' => 'required|string',
             'total' => 'required|numeric',
@@ -89,6 +89,11 @@ class CartController extends Controller
         if (auth()->check()) {
             $order->user_id = auth()->user()->id;
         }
+        $order->firstname = $request->firstname;
+        $order->lastname = $request->lastname;
+        $order->email = $request->email;
+        $order->city = $request->city;
+        $order->postal_code = $request->postal_code;
         $order->total = $request->total;
         $order->address = $request->address;
         $order->phone = $request->phone;

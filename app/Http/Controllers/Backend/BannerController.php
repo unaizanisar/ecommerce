@@ -22,15 +22,24 @@ class BannerController extends Controller
     }
     public function index()
     {
+        if (!auth()->user()->hasPermission('Banner Listing')) {
+            return redirect()->route('dashboard')->with('error', 'You do not have permission to view Banner Listing!');
+        }
         $banners = $this->bannerRepository->getAllBanners();
         return view('backend.banners.banner', compact('banners'));
     }
     public function create()
     {
+        if (!auth()->user()->hasPermission('Banner Add')) {
+            return redirect()->route('banners.index')->with('error', 'You do not have permission to Add New Banner!');
+        }
         return view('backend.banners.create');
     }
     public function store(Request $request)
     {
+        if (!auth()->user()->hasPermission('Banner Add')) {
+            return redirect()->route('banners.index')->with('error', 'You do not have permission to Add New Banner!');
+        }
         $validator = Validator::make($request->all(), [
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
             'description' => 'required|string|max:255',
@@ -57,11 +66,17 @@ class BannerController extends Controller
     }
     public function edit($id)
     {
+        if (!auth()->user()->hasPermission('Banner Edit')) {
+            return redirect()->route('banners.index')->with('error', 'You do not have permission to Edit Banner!');
+        }
         $banner = $this->bannerRepository->getBannerById($id);
         return view('backend.banners.edit', compact('banner'));
     }
     public function update(Request $request, $id)
     {
+        if (!auth()->user()->hasPermission('Banner Edit')) {
+            return redirect()->route('banners.index')->with('error', 'You do not have permission to Edit Banner!');
+        }
         $validatedData = $request->validate([
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
             'description' => 'required|string|max:255',
@@ -93,11 +108,17 @@ class BannerController extends Controller
     }
     public function show($id)
     {
+        if (!auth()->user()->hasPermission('Banner Detail')) {
+            return redirect()->route('banners.index')->with('error', 'You do not have permission to view Banner Details!');
+        }
         $banner = $this->bannerRepository->getBannerById($id);
         return view('backend.banners.show',compact('banner'));
     }
     public function destroy($id)
     {
+        if (!auth()->user()->hasPermission('Banner Delete')) {
+            return redirect()->route('banners.index')->with('error', 'You do not have permission to Delete Banner!');
+        }
         $banner = $this->bannerRepository->deleteBanner($id);
         if(!$banner)
         {
@@ -107,6 +128,9 @@ class BannerController extends Controller
     }
     public function updateStatus($id, $status)
     {
+        if (!auth()->user()->hasPermission('Banner Change Status')) {
+            return redirect()->route('banners.index')->with('error', 'You do not have permission to Change Banner Status!');
+        }
         $banner = $this->bannerRepository->updateBannerStatus($id, $status);
         return redirect()->route('banners.index')->with('success', $status==1 ? 'Banner activated successfully':'Banner deactivated successfully');
     }

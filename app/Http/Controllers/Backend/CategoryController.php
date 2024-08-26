@@ -21,15 +21,24 @@ class CategoryController extends Controller
     }
     public function index()
     {
+        if (!auth()->user()->hasPermission('Category Listing')) {
+            return redirect()->route('dashboard')->with('error', 'You do not have permission to view Category Listing!');
+        }
         $categories = $this->categoryRepository->getAllCategories();
         return view('backend.categories.category', compact('categories'));
     }
     public function create()
     {
+        if (!auth()->user()->hasPermission('Category Add')) {
+            return redirect()->route('categories.index')->with('error', 'You do not have permission to Add Category!');
+        }
         return view('backend.categories.create');
     }
     public function store(Request $request)
     {
+        if (!auth()->user()->hasPermission('Category Add')) {
+            return redirect()->route('categories.index')->with('error', 'You do not have permission to Add Category!');
+        }
         $validator = Validator::make($request->all(),[
             'name' => 'required|string|max:255',
             'description' => 'required|string|max:255',
@@ -55,11 +64,17 @@ class CategoryController extends Controller
     }
     public function show($id)
     {
+        if (!auth()->user()->hasPermission('Category Detail')) {
+            return redirect()->route('categories.index')->with('error', 'You do not have permission to view Category Details!');
+        }
         $category = $this->categoryRepository->getCategoryById($id);
         return view('backend.categories.show',compact('category'));
     }
     public function destroy($id)
     {
+        if (!auth()->user()->hasPermission('Category Delete')) {
+            return redirect()->route('categories.index')->with('error', 'You do not have permission to Delete Category!');
+        }
         $category = $this->categoryRepository->deleteCategory($id);
         if(!$category)
         {
@@ -69,16 +84,25 @@ class CategoryController extends Controller
     }
     public function updateStatus($id, $status)
     {
+        if (!auth()->user()->hasPermission('Category Change Status')) {
+            return redirect()->route('categories.index')->with('error', 'You do not have permission to Change Category Status!');
+        }
         $category = $this->categoryRepository->updateCategoryStatus($id, $status);
         return redirect()->route('categories.index')->with('success', $status==1 ? 'Category activated successfully':'Category deactivated successfully');
     }
     public function edit($id)
     {
+        if (!auth()->user()->hasPermission('Category Edit')) {
+            return redirect()->route('categories.index')->with('error', 'You do not have permission to Edit Category!');
+        }
         $category = $this->categoryRepository->getCategoryById($id);
         return view('backend.categories.edit', compact('category'));
     }
     public function update(Request $request, $id)
     {
+        if (!auth()->user()->hasPermission('Category Edit')) {
+            return redirect()->route('categories.index')->with('error', 'You do not have permission to Edit Category!');
+        }
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string|max:255',
@@ -109,6 +133,9 @@ class CategoryController extends Controller
     }
     public function updateHome($id, $is_home)
     {
+        if (!auth()->user()->hasPermission('Category Home')) {
+            return redirect()->route('categories.index')->with('error', 'You do not have permission to display Category on Home Screen!');
+        }
         $product = $this->categoryRepository->getCategoryById($id);
         $this->categoryRepository->updateCategoryHome($id, $is_home);
 

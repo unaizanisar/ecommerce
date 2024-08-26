@@ -53,8 +53,8 @@
                 <label for="profile_photo">Profile Photo</label>
                 <input type="file" class="form-control" id="profile_photo" name="profile_photo">
                 @if ($profile->profile_photo)
-                    <div class="mt-2">
-                        <img src="{{ asset('uploads/' . $profile->profile_photo) }}" alt="Profile Photo" class="img-fluid">
+                    <div class="mt-2"> 
+                        <img src="{{ asset('uploads/' . $profile->profile_photo) }}" alt="Profile Photo" class="img-fluid" style ="max-width: 150px; height: auto;">
                     </div>
                 @endif
                 @error('profile_photo')

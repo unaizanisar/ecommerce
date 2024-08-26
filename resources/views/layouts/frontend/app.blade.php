@@ -12,7 +12,7 @@
     <!-- Bootstrap -->
     <link href="{{ asset('frontend/css/bootstrap.css')}}" rel="stylesheet">   
     <!-- Toastr CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
     <!-- SmartMenus jQuery Bootstrap Addon CSS -->
     <link href="{{ asset('frontend/css/jquery.smartmenus.bootstrap.css')}}" rel="stylesheet">
     <!-- Product view slider -->
@@ -35,7 +35,7 @@
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script> 
     <![endif]-->
   </head>
   <body> 

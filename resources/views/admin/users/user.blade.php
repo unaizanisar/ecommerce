@@ -1,10 +1,12 @@
 @extends('layouts.app')
 @section('title', 'Users')
 @section('content')
-    <div class="container">
+    <div class="container"> 
         <h2> Users Listing</h2>
         <div class="text-end">
+            @if(auth()->user()->hasPermission('User Add'))
             <a href="{{ route('users.create') }}" class="btn btn-success">Add New User</a>
+            @endif
         </div>
         <br>
         <div class="table-responsive table--no-card m-b-40" style="max-height: 600px; overflow-y: auto;">
@@ -41,17 +43,25 @@
                                 @endif
                             </td>
                             <td>
+                                @if(auth()->user()->hasPermission('User Detail'))
                                 <a href="{{ route('users.show', $user->id) }}" class="btn btn-sm btn-info" title="Details"><i class="fa fa-eye"></i></a> <span style="color:grey">|</span>
+                                @endif
+                                @if(auth()->user()->hasPermission('User Edit'))
                                 <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-primary" title="Edit"><i class="fa fa-pen"></i></a> <span style="color:grey">|</span>
+                                @endif
+                                @if(auth()->user()->hasPermission('User Delete'))
                                 <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this user?');"><i class="fa fa-trash"></i></button>
                                 </form> <span style="color:grey">|</span>
-                                @if($user->status == 1)
-                                    <a href="{{ route('users.updateStatus', ['id' => $user->id, 'status' => 0]) }}" class="btn btn-sm btn-danger" title="In-Active" onclick="return confirm('Are you sure you want to in-active this user?');"><i class="fa fa-user-slash"></i></a>
-                                @else
-                                    <a href="{{ route('users.updateStatus', ['id' => $user->id, 'status' => 1]) }}" class="btn btn-sm btn-success" title="Active" onclick="return confirm('Are you sure you want to active this user?');"><i class="fa fa-user-check"></i></a>
+                                @endif
+                                @if(auth()->user()->hasPermission('User Change Status'))
+                                    @if($user->status == 1)
+                                        <a href="{{ route('users.updateStatus', ['id' => $user->id, 'status' => 0]) }}" class="btn btn-sm btn-danger" title="In-Active" onclick="return confirm('Are you sure you want to in-active this user?');"><i class="fa fa-user-slash"></i></a>
+                                    @else
+                                        <a href="{{ route('users.updateStatus', ['id' => $user->id, 'status' => 1]) }}" class="btn btn-sm btn-success" title="Active" onclick="return confirm('Are you sure you want to active this user?');"><i class="fa fa-user-check"></i></a>
+                                    @endif
                                 @endif
                             </td>
                         </tr>
@@ -72,6 +82,13 @@
     </script>
     @endif
 
+    @if(session('error'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            toastr.error("{{ session('error') }}");
+        });
+    </script>
+    @endif
     @push('scripts')
     {{-- <script>
         $(document).ready(function() {

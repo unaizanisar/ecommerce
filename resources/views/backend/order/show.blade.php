@@ -15,12 +15,40 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><strong>Order Details</strong></td>
-                                    <td>{{ $order->order_details }}</td>
+                                    <td><strong>First Name</strong></td>
+                                    <td>{{ $order->firstname }}</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Payment Information</strong></td>
-                                    <td>{{ $order->payment_information }}</td>
+                                    <td><strong>Last Name</strong></td>
+                                    <td>{{ $order->lastname }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Email</strong></td>
+                                    <td>{{ $order->email }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Phone</strong></td>
+                                    <td>{{ $order->phone }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Address</strong></td>
+                                    <td>{{ $order->address }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>City</strong></td>
+                                    <td>{{ $order->city }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Postal Code</strong></td>
+                                    <td>{{ $order->postal_code }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Total</strong></td>
+                                    <td>{{ $order->total }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Order Placed Date</strong></td>
+                                    <td>{{ $order->created_at }}</td>
                                 </tr>
                             </tbody>
                         </table>

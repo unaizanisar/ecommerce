@@ -17,40 +17,55 @@
           <span class="material-symbols-outlined">dashboard</span>
           <a href="dashboard">Dashboard</a>
         </li>
+        @if(auth()->user()->hasPermission('User Listing'))
         <li>
           <span class="material-symbols-outlined">group</span>
           <a href="{{ url('/users') }}">Users</a>
         </li>
+        @endif
+        @if(auth()->user()->hasPermission('Category Listing'))
         <li>
           <span class="material-symbols-outlined">category</span>
           <a href="{{ url('/categories') }}">Categories</a>
         </li>
+        @endif
+        @if(auth()->user()->hasPermission('Product Listing'))
         <li>
           <span class="material-symbols-outlined">shopping_bag</span>
           <a href="{{ url('/products') }}">Products</a>
         </li>
+        @endif
+        @if(auth()->user()->hasPermission('Order Listing'))
         <li>
           <span class="material-symbols-outlined">shopping_cart</span>
           <a href="{{ url('/orders') }}">Orders</a>
         </li>
+        @endif
+        @if(auth()->user()->hasPermission('Customer Listing'))
         <li>
           <span class="material-symbols-outlined">user_attributes</span>
           <a href="{{ url('/customers') }}">Customers</a>
         </li>
+        @endif
+        @if(auth()->user()->hasPermission('Banner Listing'))
         <li>
           <span class="material-symbols-outlined">planner_banner_ad_pt
           </span>
           <a href="{{ url('/banners') }}">Banners</a>
         </li>
+        @endif
+        @if(auth()->user()->hasPermission('Role Listing'))
         <li>
           <span class="material-symbols-outlined">supervised_user_circle</span>
           <a href="{{ url('/roles') }}">Roles</a>
         </li>
+        @endif
+        @if(auth()->user()->hasPermission('Permission Listing'))
         <li>
           <span class="material-symbols-outlined">lock_person</span>
           <a href="{{ url('/permissions') }}">Permissions</a>
         </li>
-        
+        @endif
         <li class="logout-link">
           <span class="material-symbols-outlined">logout</span>
             <a href="{{ route('logout') }}"
