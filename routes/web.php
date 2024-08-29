@@ -21,6 +21,10 @@ use App\Http\Controllers\Frontend\ProductController as FrontendProductController
 Route::get('/', function () {
     return view('auth.login');
 });
+Route::get('/inactive', function () {
+    return view('auth.inactive');
+})->name('inactive');
+
 Route::get('/category/{id}', [ProductController::class, 'viewCategory'])->name('category.view');
 Auth::routes();
 

@@ -6,14 +6,14 @@
     <form method="POST" action="{{ route('login') }}">
         @csrf
         <h2>{{ __('Login') }}</h2>
-            <div class="input-field">
+            <div class="input-field"> 
                 <input type="email" id="email" name="email" value="{{ old('email') }}"  autofocus class="form-control-user @error('email') is-invalid @enderror" aria-describedby="emailHelp">
                 <label for="email">{{ __('Enter your email') }}</label>
                 @error('email')
                         <div class="invalid-feedback">
                             <strong>{{ $message }}</strong>
                         </div>
-                @enderror
+                @enderror 
             </div>
             <div class="input-field">
                 <input type="password" id="password" name="password" autofocus class="form-control-user @error('password') is-invalid @enderror">

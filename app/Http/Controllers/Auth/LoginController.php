@@ -40,7 +40,11 @@ class LoginController extends Controller
     }
     protected function authenticated(Request $request, $user)
     {
-        Session::flash('success', 'You have successfully logged in!');
+        if($user->status==0){
+            $this->guard()->logout();
+            return redirect()->route('inactive')->with('error', 'Your account is inactive.');
+        }
+        Session::flash('success', 'You are successfully logged in!');
         return redirect()->intended($this->redirectPath());
     }
 }

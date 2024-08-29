@@ -7,7 +7,7 @@
     <div class="aa-slider-area">
       <div id="sequence" class="seq">
         <div class="seq-screen">
-          <ul class="seq-canvas">
+          <ul class="seq-canvas"> 
             <!-- Loop through the banners -->
             @foreach($banners as $banner)
             <li>
@@ -141,20 +141,6 @@
 </section>
 <!-- / Products section -->
 
-  <!-- banner section -->
-  <section id="aa-banner">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">        
-          <div class="row">
-            <div class="aa-banner-area">
-            <a href="#"><img src="{{ asset('frontend/img/fashion-banner.jpg') }}" alt="fashion banner img"></a>
-          </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
   <!-- featured section -->
   
   <section id="aa-product">

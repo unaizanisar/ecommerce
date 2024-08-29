@@ -16,12 +16,20 @@ body {
   padding: 0 10px;
 }
 
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000; 
+}
+
 body::before {
   content: "";
   position: absolute;
   width: 100%;
   height: 100%;
-  background: url("https://www.codingnepalweb.com/demos/create-glassmorphism-login-form-html-css/hero-bg.jpg"), #000;
+  background:radial-gradient(circle at center, #000000, #516fd1);
   background-position: center;
   background-size: cover;
 }

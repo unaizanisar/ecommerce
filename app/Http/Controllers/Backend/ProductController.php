@@ -5,7 +5,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Interfaces\ProductRepositoryInterface;
-use App\Interfaces\CategoryRepositoryInterface;
+use App\Interfaces\CategoryRepositoryInterface; 
 
 class ProductController extends Controller
 {
@@ -56,7 +56,7 @@ class ProductController extends Controller
             $file = $request->file('images');
             if ($file->isValid()) {
                 $filename = time() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('uploads/products'), $filename);
+                $file->move(public_path('uploads/products'), $filename); 
                 $data['images'] = $filename;
             } else {
                 return back()->withErrors(['images' => 'Uploaded file is not valid'])->withInput();
