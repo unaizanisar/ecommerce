@@ -39,10 +39,14 @@
 </head>
 <body>
     <div id="app">
-        @include('layouts.navbar')
+        @if (!in_array(request()->route()->getName(), ['login', 'register']))
+            @include('layouts.navbar')
+        @endif
+
         <main class="py-4">
             @yield('content')
         </main>
+        
         @include('layouts.footer')
     </div>
 

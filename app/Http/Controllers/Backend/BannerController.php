@@ -41,7 +41,7 @@ class BannerController extends Controller
             return redirect()->route('banners.index')->with('error', 'You do not have permission to Add New Banner!');
         }
         $validator = Validator::make($request->all(), [
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',  
             'description' => 'required|string|max:255',
             'btn_text' => 'required|string|max:255',
             'btn_link' => 'required|string|max:255',
