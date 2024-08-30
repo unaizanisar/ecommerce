@@ -39,17 +39,14 @@
 </head>
 <body>
     <div id="app">
-        @if (!in_array(request()->route()->getName(), ['login', 'register']))
+        @if (!in_array(request()->route()->getName(), ['login', 'register']) && request()->url() !== url('/'))
             @include('layouts.navbar')
         @endif
-
         <main class="py-4">
             @yield('content')
         </main>
-        
         @include('layouts.footer')
     </div>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>

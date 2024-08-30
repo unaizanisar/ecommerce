@@ -5,14 +5,17 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Interfaces\RoleRepositoryInterface;
+use App\Interfaces\RoleRepositoryInterface; 
+use App\Interfaces\PermissionRepositoryInterface;
 
 class ApiRoleController extends Controller
 {
     protected $roleRepository;
-    public function __construct(RoleRepositoryInterface $roleRepository)
+    protected $permissionRepository;
+    public function __construct(RoleRepositoryInterface $roleRepository, PermissionRepositoryInterface $permissionRepository)
     {
         $this->roleRepository = $roleRepository;
+        $this->permissionRepository = $permissionRepository;
     }
     public function index()
     {
@@ -34,36 +37,51 @@ class ApiRoleController extends Controller
     }
     public function store(Request $request)
     {
-        try{
-            $validator = Validator::make($request->all(),[
-                'name' => 'required|string|max:255',
+        try {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|string|max:255|unique:roles',
+                'permissions' => 'array',
+                'permissions.*' => 'exists:permissions,id', 
             ]);
-            if($validator->fails()){
-                return response()->json(['error'=> $validator->errors()], 422);
+
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()], 422);
             }
+
             $data = $request->all();
             $role = $this->roleRepository->createRole($data);
-            return response()->json(['role'=>$role, 'message'=>'Role created successfully'], 201);
+            $this->roleRepository->roleHasPermissions($role->id, $request->input('permissions', []));
+
+            return response()->json(['role' => $role, 'message' => 'Role created successfully'], 201);
         } catch (\Exception $e) {
-            return response()->json(['error'=>'An error occured while creating role', 'message'=>$e->getMessage()], 500);
+            return response()->json(['error' => 'An error occurred while creating the role', 'message' => $e->getMessage()], 500);
         }
     }
     public function update(Request $request, $id)
     {
         try{
             $validatedData = $request->validate([
-                'name' => 'required|string|max:255',
+                'name' => 'required|string|max:255|unique:roles,name,'.$id,
+                'permissions' => 'array',
+                'permissions.*' => 'exists:permissions,id',
             ]);
             $role = $this->roleRepository->getRoleById($id);
             if(!$role)
             {
-                return response()->json(['error'=>'Role not found'], 404);
+                return response()->json(['error', 'Role not found'], 404);
             }
-            $data = $validatedData;
-            $this->roleRepository->updateRole($id, $data);
-            return response()->json(['message'=>'Role updated successfully'], 200);
+            $this->roleRepository->updateRole($id, $validatedData);
+            $this->roleRepository->roleHasPermissions($role->id, $request->input('permissions',[]));
+            return response()->json([
+                'message'=>'Role updated successfully',
+                'role' => $role
+            ],200);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'An error occured while updating the role', 'message'=>$e->getMessage()], 500);
+            return response()->json([
+                'error' => 'An error occured while updating role',
+                'message' => $e->getMessage()
+                
+            ],500);
         }
     }
     public function destroy($id)
