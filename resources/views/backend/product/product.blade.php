@@ -105,10 +105,10 @@
 @endif
 
 @push('scripts')
-{{-- <script>
+<script>
         $(document).ready(function() {
             $('.table').DataTable();
         });
-        </script>         --}}
+        </script>        
 @endpush
 @endsection

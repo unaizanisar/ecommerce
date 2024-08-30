@@ -11,7 +11,6 @@
         <br>
         <div class="table-responsive table--no-card m-b-40">
             <table class="table table-borderless table-striped table-earning" width="100%" cellspacing="0" style="text-align: center">
-            {{-- <table id="orders-table" class="table table-bordered display stripe" width="100%" cellspacing="0" style="text-align: center"> --}}
                 <thead>
                     <tr>
                         <th>#</th>
@@ -40,10 +39,12 @@
                             <td>{{ $order->postal_code }}</td>
                             <td>{{ $order->total }}</td>
                             <td>
-                                @if($order->status == 1)
-                                    <span class="badge badge-success">Active</span>
-                                @else
-                                    <span class="badge badge-danger">In-Active</span>
+                                @if($order->status == 'in_process')
+                                    <span class="badge badge-warning">In Process</span>
+                                @elseif($order->status == 'delivered')
+                                    <span class="badge badge-success">Delivered</span>
+                                @elseif($order->status == 'cancelled')
+                                    <span class="badge badge-danger">Cancelled</span>
                                 @endif
                             </td>
                             <td>
@@ -61,17 +62,15 @@
                                 </form> <span style="color:grey">|</span>
                                 @endif
                                 @if(auth()->user()->hasPermission('Order Change Status'))
-                                    @if($order->status == 1)
-                                        <a href="{{ route('orders.updateStatus', ['id' => $order->id, 'status' => 0]) }}" class="btn btn-sm btn-danger" title="In-Active" onclick="return confirm('Are you sure you want to in-active this order?');"><i class="fa fa-user-slash"></i></a>
-                                    @else
-                                        <a href="{{ route('orders.updateStatus', ['id' => $order->id, 'status' => 1]) }}" class="btn btn-sm btn-success" title="Active" onclick="return confirm('Are you sure you want to active this order?');"><i class="fa fa-user-check"></i></a>
-                                    @endif
+                                        <a href="{{ route('orders.updateStatus', ['id' => $order->id, 'status' => 'in_process']) }}" class="btn btn-sm btn-warning" title="In Process"><i class="fas fa-spinner"></i></a> <span style="color:grey">|</span>
+                                        <a href="{{ route('orders.updateStatus', ['id' => $order->id, 'status' => 'delivered']) }}" class="btn btn-sm btn-success" title="Delivered"><i class="fas fa-check-circle"></i></a> <span style="color:grey">|</span>
+                                        <a href="{{ route('orders.updateStatus', ['id' => $order->id, 'status' => 'cancelled']) }}" class="btn btn-sm btn-danger" title="Cancel Order"><i class="fas fa-window-close"></i></a>
                                 @endif
                             </td>
                         </tr>
                     @empty
                         <tr style="text-align: center">
-                            <td colspan="9">Record Not Found</td>
+                            <td colspan="11">Record Not Found</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -87,10 +86,10 @@
     @endif
 
     @push('scripts')
-{{-- <script>
+    <script>
         $(document).ready(function() {
             $('.table').DataTable();
         });
-        </script>         --}}
+        </script>        
     @endpush
 @endsection

@@ -108,6 +108,6 @@ class OrderController extends Controller
             return redirect()->route('dashboard')->with('error', 'You do not have permission to Change Order Status!');
         }
         $order = $this->orderRepository->updateOrderStatus($id, $status);
-        return redirect()->route('orders.index')->with('success', $status == 1 ? 'Order Activated Successfully!':'Order Deactivated Successfully!');
+        return redirect()->route('orders.index')->with('success', 'Order status updated successfully!');
     }
 }

@@ -17,6 +17,8 @@ use App\Http\Controllers\Frontend\ReviewController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\ProductController as FrontendProductController;
 
+
+
 // Public routes
 Route::get('/', function () {
     return view('auth.login');
@@ -98,6 +100,12 @@ Route::get('/cart/decrease/{id}', [CartController::class, 'decrease'])->name('ca
 Route::get('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
 Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 Route::post('/cart/checkout', [CartController::class, 'placeOrder'])->name('cart.placeOrder');
+
+Route::get('/order/done', [CartController::class, 'done'])->name('order.done');
+Route::get('/order/track', [CartController::class, 'showTrackForm'])->name('order.track');
+Route::post('/order/track', [CartController::class, 'trackOrder']);
+Route::post('/order/track', [CartController::class, 'trackOrder'])->name('order.trackOrder');
+
 Route::get('/order/done', function () {
     return view('frontend.frontend.done');
 })->name('order.done');

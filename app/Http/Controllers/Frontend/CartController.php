@@ -8,7 +8,7 @@ use App\Models\Product;
 use App\Models\Order;
 use Illuminate\Support\Facades\Session;
 
-class CartController extends Controller
+class CartController extends Controller 
 {
     public function index()
     {
@@ -70,6 +70,7 @@ class CartController extends Controller
         }, 0);
         return view('frontend.frontend.checkout', compact('cart', 'total'));
     }
+    
     public function placeOrder(Request $request)
     {
         $request->validate([
@@ -82,9 +83,14 @@ class CartController extends Controller
             'postal_code' => 'required|string',
             'total' => 'required|numeric',
         ]);
+    
         if (!session()->has('cart') || count(session('cart')) == 0) {
             return redirect()->route('product.viewProducts')->with('error', 'Your cart is empty!');
         }
+    
+        // Generate a unique tracking ID
+        $trackingID = 'PKJ' . strtoupper(uniqid());
+    
         $order = new Order();
         if (auth()->check()) {
             $order->user_id = auth()->user()->id;
@@ -97,7 +103,9 @@ class CartController extends Controller
         $order->total = $request->total;
         $order->address = $request->address;
         $order->phone = $request->phone;
+        $order->tracking_id = $trackingID; // Save the tracking ID
         $order->save();
+    
         foreach (session('cart') as $id => $details) {
             $order->orderItems()->create([
                 'product_id' => $id,
@@ -105,7 +113,30 @@ class CartController extends Controller
                 'price' => $details['price'],
             ]);
         }
+    
         session()->forget('cart');
-        return redirect()->route('order.done')->with('success', 'Your order has been placed successfully!');
+    
+        // Pass the tracking ID using session
+        return redirect()->route('order.done')->with('trackingID', $trackingID)->with('success', 'Your order has been placed successfully!');
     }
+    public function showTrackForm()
+    {
+        return view('frontend.frontend.track');
+    }
+    public function trackOrder(Request $request)
+    {
+        $request->validate([
+            'trackingID' => 'required|string',
+        ]);
+
+        $order = Order::where('tracking_id', $request->trackingID)->first();
+
+        if (!$order) {
+            return redirect()->back()->with('error', 'Invalid Tracking ID');
+        }
+
+        return view('frontend.frontend.trackResult', compact('order'));
+    }
+    
+
 }

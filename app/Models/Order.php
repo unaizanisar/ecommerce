@@ -19,6 +19,7 @@ class Order extends Model
         'total',
         'address',
         'phone',
+        'status',
     ]; 
 
     public function orderItems()

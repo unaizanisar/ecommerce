@@ -37,7 +37,35 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script> 
     <![endif]-->
+    <style>
+      /* Custom styling for the order tracking result section */
+  .custom-track-result {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+      background-color: #f8f9fa; /* Light background color for contrast */
+      padding: 20px;
+  }
+  
+  .custom-track-result .card {
+      border-radius: 8px; /* Rounded corners for the card */
+      border: 1px solid #dee2e6; /* Light border for the card */
+  }
+  
+ 
+  .custom-track-result .card-body {
+      padding: 20px;
+  }
+  
+  .custom-track-result .card-footer {
+      background-color: #f1f1f1; /* Slightly different background for the footer */
+      border-top: 1px solid #dee2e6; /* Border at the top of the footer */
+  }
+  
+    </style>
   </head>
+  
   <body> 
    <!-- wpf loader Two -->
     <div id="wpf-loader-two">          
