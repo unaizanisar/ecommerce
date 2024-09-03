@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request; 
 
 use App\Interfaces\UserRepositoryInterface;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\UserSaveRequest;
+use App\Http\Requests\UserUpdateRequest;
 
 class UserController extends Controller
 {
@@ -44,24 +46,12 @@ class UserController extends Controller
         $roles = $this->userRepository->getAllRoles();
         return view('admin.users.create', compact('roles'));
     }
-    public function store(Request $request)
+    public function store(UserSaveRequest $request)
     {
         if (!auth()->user()->hasPermission('User Add')) {
             return redirect()->route('users.index')->with('error', 'You do not have permission to Add User!');
         }
-        $validator = Validator::make($request->all(), [
-            'firstname' => 'required|string|max:255',
-            'lastname' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
-            'address' => 'required|string|max:255',
-            'phone' => 'required|numeric|unique:users|digits:11',
-            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
-            'role_id' => 'required|exists:roles,id',
-    ]);
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
+        
         $data = $request->all();
         if ($request->hasFile('profile_photo')) {
             $file = $request->file('profile_photo');
@@ -106,27 +96,20 @@ class UserController extends Controller
         $roles = $this->userRepository->getAllRoles();
         return view('admin.users.edit', compact('user', 'roles'));
     }
-    public function update($id, Request $request)
+    public function update($id, UserUpdateRequest $request)
     {
         if (!auth()->user()->hasPermission('User Edit')) {
             return redirect()->route('users.index')->with('error', 'You do not have permission to Edit User!');
         }
-        $validatedData = $request->validate([
-            'firstname' => 'required|string|max:255',
-            'lastname' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $id,
-            'password' => 'nullable|string|min:8',
-            'address' => 'required|string|max:255',
-            'phone' => 'required|numeric|unique:users,phone,' . $id . '|digits:11',
-            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'role_id' => 'required|exists:roles,id',
-        ]);
+
         $data = $request->all();
+        
         if ($request->filled('password')) {
             $data['password'] = bcrypt($data['password']);
         } else {
             unset($data['password']);
         }
+
         if ($request->hasFile('profile_photo')) {
             $file = $request->file('profile_photo');
             if ($file->isValid()) {
@@ -137,7 +120,9 @@ class UserController extends Controller
                 return back()->withErrors(['profile_photo' => 'Uploaded file is not valid'])->withInput();
             }
         } 
+        
         $this->userRepository->updateUser($id, $data);
+
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
 

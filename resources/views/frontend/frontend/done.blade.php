@@ -13,7 +13,6 @@
                 <br>
             @endif
             <a href="{{ route('order.track') }}" class="btn btn-success">Track Order</a>
-
             <br>
             <p>Shop More!</p>
             <a href="{{ route('home') }}"> Go to Homepage</a>

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Interfaces\PermissionRepositoryInterface;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\PermissionSaveRequest;
+use App\Http\Requests\PermissionUpdateRequest;
 
 class PermissionController extends Controller
 {
@@ -34,19 +36,12 @@ class PermissionController extends Controller
         }
         return view('admin.permissions.create');
     }
-    public function store(Request $request)
+    public function store(PermissionSaveRequest $request)
     {
         if (!auth()->user()->hasPermission('Permission Add')) {
             return redirect()->route('permissions.index')->with('error', 'You do not have permission to Add Permission!');
         }
-        $validator = Validator::make($request->all(),[
-            'name'=>'required|string|max:255',
-            'module'=>'required|string|max:255',
-        ]);
-        if($validator->fails())
-        {
-            return back()->withErrors($validator)->withInput();
-        }
+        
         $data = $request->all();
         $this->permissionRepository->createPermission($data);
         return redirect()->route('permissions.index')->with('success','Permission created successfully.');
@@ -59,18 +54,15 @@ class PermissionController extends Controller
         $permission = $this->permissionRepository->getPermissionById($id);
         return view('admin.permissions.edit',compact('permission'));
     }
-    public function update($id, Request $request)
+    public function update($id, PermissionUpdateRequest $request)
     {
         if (!auth()->user()->hasPermission('Permission Edit')) {
             return redirect()->route('permissions.index')->with('error', 'You do not have permission to Edit Permission!');
         }
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'module' => 'required|string|max:255',
-        ]);
+
         $permission = $this->permissionRepository->updatePermission($id, $request->all());
         return redirect()->route('permissions.index')->with('success','Permission Updated Successfully.');
-    }
+    } 
     public function show($id)
     {
         if (!auth()->user()->hasPermission('Permission Detail')) {

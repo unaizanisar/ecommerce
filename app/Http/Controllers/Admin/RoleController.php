@@ -1,12 +1,15 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
- 
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Interfaces\RoleRepositoryInterface;
 use App\Interfaces\PermissionRepositoryInterface;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\RoleSaveRequest;
+use App\Http\Requests\RoleUpdateRequest;
+
 
 class RoleController extends Controller
 {
@@ -34,20 +37,11 @@ class RoleController extends Controller
         $permissions = $this->permissionRepository->getPermissionsByModules();
         return view('admin.roles.create', compact('permissions'));
     }
-    public function store(Request $request)
+    public function store(RoleSaveRequest $request)
     {
         if (!auth()->user()->hasPermission('Role Add')) {
             return redirect()->route('roles.index')->with('error', 'You do not have permission to Add Role!');
         }
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255|unique:roles',
-            'permissions' => 'array', 
-        ]);
-
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
-
         $role = $this->roleRepository->createRole($request->all());
         $this->roleRepository->roleHasPermissions($role->id, $request->input('permissions', []));
 
@@ -70,23 +64,13 @@ class RoleController extends Controller
         $permissions = $this->permissionRepository->getPermissionsByModules();
         return view('admin.roles.edit', compact('role', 'permissions'));
     }
-    public function update(Request $request, $id)
+    public function update(RoleUpdateRequest $request, $id)
     {
         if (!auth()->user()->hasPermission('Role Edit')) {
             return redirect()->route('roles.index')->with('error', 'You do not have permission to Edit Role!');
         }
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255|unique:roles,name,' . $id,
-            'permissions' => 'array',
-        ]);
-
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
-
         $role = $this->roleRepository->updateRole($id, $request->all());
         $this->roleRepository->roleHasPermissions($role->id, $request->input('permissions', []));
-
         return redirect()->route('roles.index')->with('success', 'Role updated successfully.');
     }
     public function destroy($id)

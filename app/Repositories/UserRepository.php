@@ -23,20 +23,12 @@ class UserRepository implements UserRepositoryInterface
     }
     public function createUser(array $data)
     {
-        $user = new User();
-        $user->firstname = $data['firstname'];
-        $user->lastname = $data['lastname'];
-        $user->email = $data['email'];
-        $user->password = $data['password'];
-        $user->address = $data['address'];
-        $user->phone = $data['phone'];
-        if (isset($data['profile_photo'])) {
-            $user->profile_photo = $data['profile_photo'];
+        if (isset($data['password'])) {
+            $data['password'] = bcrypt($data['password']);
         }
-        $user->role_id = $data['role_id'];
-        $user->save();
-        return $user;
+        return User::create($data);
     }
+    
     public function deleteUser($id)
     {
         $user = User::findOrFail($id);
@@ -55,19 +47,10 @@ class UserRepository implements UserRepositoryInterface
     public function updateUser($id, array $data)
     {
         $user = User::findOrFail($id);
-        $user->firstname = $data['firstname'];
-        $user->lastname = $data['lastname'];
-        $user->email = $data['email'];
         if (isset($data['password'])) {
-            $user->password = $data['password'];
+            $data['password'] = bcrypt($data['password']);
         }
-        $user->address = $data['address'];
-        $user->phone = $data['phone'];
-        if (isset($data['profile_photo'])) {
-            $user->profile_photo = $data['profile_photo'];
-        }
-        $user->role_id = $data['role_id'];
-        $user->save();
+        $user->update($data);
         return $user;
     }
 }

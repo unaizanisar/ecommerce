@@ -18,16 +18,12 @@ class RoleRepository implements RoleRepositoryInterface
     }
     public function createRole(array $data)
     {
-        $role = new Role();
-        $role->name = $data['name'];
-        $role->save();
-        return $role;
+        return Role::create($data);
     }
     public function updateRole($id, array $data)
     {
         $role = Role::findOrFail($id);
-        $role->name = $data['name'];
-        $role->save();
+        $role->update($data);
         return $role;
     }
     public function deleteRole($id)

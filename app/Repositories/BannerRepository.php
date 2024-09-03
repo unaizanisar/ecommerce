@@ -17,26 +17,12 @@ class BannerRepository implements BannerRepositoryInterface
     }
     public function createBanner(array $data)
     {
-        $banner = new Banner();
-        if (isset($data['image'])) {
-            $banner->image = $data['image'];
-        }
-        $banner->description = $data['description'];
-        $banner->btn_text = $data['btn_text'];
-        $banner->btn_link = $data['btn_link'];
-        $banner->save();
-        return $banner;
+        return Banner::create($data);
     } 
     public function updateBanner($id, array $data)
     {
         $banner = Banner::findOrFail($id);
-        if (isset($data['image'])) {
-            $banner->image = $data['image'];
-        }
-        $banner->description = $data['description'];
-        $banner->btn_text = $data['btn_text'];
-        $banner->btn_link = $data['btn_link'];
-        $banner->save();
+        $banner->update($data);
         return $banner;
     }
     public function deleteBanner($id)

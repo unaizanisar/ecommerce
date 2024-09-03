@@ -7,7 +7,10 @@ use Illuminate\Http\Request;
 use App\Models\Category;
 use Illuminate\Support\Facades\Validator;
 use App\Interfaces\CategoryRepositoryInterface;
- 
+use App\Http\Requests\CategorySaveRequest;
+use App\Http\Requests\CategoryUpdateRequest;
+
+
 class CategoryController extends Controller
 {
     protected $categoryRepository;
@@ -17,7 +20,7 @@ class CategoryController extends Controller
     }
     public function list()
     {
-        $this->categoryRepository->getAllCategories();
+        $this->categoryRepository->getAllCategories(); 
     }
     public function index()
     {
@@ -34,19 +37,10 @@ class CategoryController extends Controller
         }
         return view('backend.categories.create');
     }
-    public function store(Request $request)
+    public function store(CategorySaveRequest $request)
     {
         if (!auth()->user()->hasPermission('Category Add')) {
             return redirect()->route('categories.index')->with('error', 'You do not have permission to Add Category!');
-        }
-        $validator = Validator::make($request->all(),[
-            'name' => 'required|string|max:255',
-            'description' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
-        ]);
-        if($validator->fails())
-        {
-            return back()->withErrors($validator)->withInput();
         }
         $data = $request->all();
         if ($request->hasFile('image')) {
@@ -98,16 +92,12 @@ class CategoryController extends Controller
         $category = $this->categoryRepository->getCategoryById($id);
         return view('backend.categories.edit', compact('category'));
     }
-    public function update(Request $request, $id)
+    public function update(CategoryUpdateRequest $request, $id)
     {
         if (!auth()->user()->hasPermission('Category Edit')) {
             return redirect()->route('categories.index')->with('error', 'You do not have permission to Edit Category!');
         }
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        
         $category = $this->categoryRepository->getCategoryById($id);
 
         $data = $request->all();

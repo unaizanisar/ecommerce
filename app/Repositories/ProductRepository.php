@@ -20,30 +20,12 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function createProduct(array $data)
     {
-        $product = new Product();
-        $product->name = $data['name'];
-        $product->description = $data['description'];
-        $product->stock = $data['stock'];
-        $product->price = $data['price'];
-        if (isset($data['images'])) {
-            $product->images = $data['images'];
-        }
-        $product->category_id = $data['category_id'];
-        $product->save();
-        return $product;
+        return Product::create($data);
     }
     public function updateProduct($id, array $data)
     {
         $product = Product::findOrFail($id);
-        $product->name = $data['name'];
-        $product->description = $data['description'];
-        $product->stock = $data['stock'];
-        $product->price = $data['price'];
-        if (isset($data['images'])) {
-            $product->images = $data['images'];
-        }
-        $product->category_id = $data['category_id'];
-        $product->save();
+        $product->update($data);
         return $product;
     }
     public function deleteProduct($id)

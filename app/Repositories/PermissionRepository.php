@@ -23,18 +23,12 @@ class PermissionRepository implements PermissionRepositoryInterface
     }
     public function createPermission(array $data)
     {
-        $permission = new Permission();
-        $permission->name = $data['name'];
-        $permission->module = $data['module'];
-        $permission->save();
-        return $permission;
+        return Permission::create($data);
     }
     public function updatePermission($id, array $data)
     {
         $permission = Permission::findOrFail($id);
-        $permission->name = $data['name'];
-        $permission->module = $data['module'];
-        $permission->save();
+        $permission->update($data);
         return $permission;
     }
     public function deletePermission($id)

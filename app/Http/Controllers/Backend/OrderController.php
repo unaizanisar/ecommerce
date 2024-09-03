@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Interfaces\OrderRepositoryInterface;
+use App\Http\Requests\OrderSaveRequest;
+use App\Http\Requests\OrderUpdateRequest;
+
+
 class OrderController extends Controller
 
 {
@@ -33,25 +37,12 @@ class OrderController extends Controller
         }
         return view('backend.order.create');
     }
-    public function store(Request $request)
+    public function store(OrderSaveRequest $request)
     {
         if (!auth()->user()->hasPermission('Order Add')) {
             return redirect()->route('dashboard')->with('error', 'You do not have permission to Add new Orders!');
         }
-        $validator = Validator::make($request->all(),[
-            'firstname' => 'required|max:255|string',
-            'lastname' => 'required|max:255|string',
-            'email' => 'required|max:255|string',
-            'city' => 'required|max:255|string',
-            'postal_code' => 'required|max:255|string',
-            'address' => 'required|max:255|string',
-            'phone' => 'required|max:255|string',
-            'total' => 'required|max:255|string',
-        ]);
-        if($validator->fails())
-        {
-            return back()->withErrors($validator)->withInput();
-        }
+        
         $data = $request->all();
         $this->orderRepository->createOrder($data);
         return redirect()->route('orders.index')->with('success', 'Order Added Successfully!');
@@ -72,21 +63,12 @@ class OrderController extends Controller
         $order = $this->orderRepository->getOrderById($id);
         return view('backend.order.edit',compact('order'));
     }
-    public function update($id, Request $request)
+    public function update($id, OrderUpdateRequest $request)
     {
         if (!auth()->user()->hasPermission('Order Edit')) {
             return redirect()->route('dashboard')->with('error', 'You do not have permission to Edit Orders!');
         }
-        $validatedData = $request->validate([
-            'firstname' => 'required|max:255|string',
-            'lastname' => 'required|max:255|string',
-            'email' => 'required|max:255|string',
-            'city' => 'required|max:255|string',
-            'postal_code' => 'required|max:255|string',
-            'address' => 'required|max:255|string',
-            'phone' => 'required|max:255|string',
-            'total' => 'required|max:255|string',
-        ]);
+
         $this->orderRepository->updateOrder($id, $request->all());
         return redirect()->route('orders.index')->with('success', 'Order updated successfully!');
     }

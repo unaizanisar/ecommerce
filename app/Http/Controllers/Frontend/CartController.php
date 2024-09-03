@@ -82,19 +82,37 @@ class CartController extends Controller
             'city' => 'required|string',
             'postal_code' => 'required|string',
             'total' => 'required|numeric',
+            'payment_method' => 'required|string',
         ]);
-    
-        if (!session()->has('cart') || count(session('cart')) == 0) {
-            return redirect()->route('product.viewProducts')->with('error', 'Your cart is empty!');
+
+        if ($request->payment_method === 'stripe') {
+            $stripeToken = $request->input('stripeToken');
+
+            if (!$stripeToken) {
+                return redirect()->back()->with('error', 'Payment error! Please try again.');
+            }
+
+            \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+
+            try {
+                $charge = \Stripe\Charge::create([
+                    'amount' => $request->total * 100,
+                    'currency' => 'usd',
+                    'description' => 'Order Payment',
+                    'source' => $stripeToken,
+                ]);
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', $e->getMessage());
+            }
         }
-    
-        // Generate a unique tracking ID
+
         $trackingID = 'PKJ' . strtoupper(uniqid());
-    
         $order = new Order();
+
         if (auth()->check()) {
             $order->user_id = auth()->user()->id;
         }
+
         $order->firstname = $request->firstname;
         $order->lastname = $request->lastname;
         $order->email = $request->email;
@@ -103,9 +121,11 @@ class CartController extends Controller
         $order->total = $request->total;
         $order->address = $request->address;
         $order->phone = $request->phone;
-        $order->tracking_id = $trackingID; // Save the tracking ID
+        $order->tracking_id = $trackingID;
+        $order->payment_method = $request->payment_method; 
+
         $order->save();
-    
+
         foreach (session('cart') as $id => $details) {
             $order->orderItems()->create([
                 'product_id' => $id,
@@ -113,12 +133,12 @@ class CartController extends Controller
                 'price' => $details['price'],
             ]);
         }
-    
+
         session()->forget('cart');
-    
-        // Pass the tracking ID using session
+
         return redirect()->route('order.done')->with('trackingID', $trackingID)->with('success', 'Your order has been placed successfully!');
     }
+
     public function showTrackForm()
     {
         return view('frontend.frontend.track');
@@ -134,9 +154,6 @@ class CartController extends Controller
         if (!$order) {
             return redirect()->back()->with('error', 'Invalid Tracking ID');
         }
-
         return view('frontend.frontend.trackResult', compact('order'));
     }
-    
-
 }

@@ -1,15 +1,15 @@
 @extends('layouts.frontend.app')
 
-@section('title', 'Checkout')
+@section('title', 'Jays Jewellery | Checkout')
 
 @section('content')
 <section id="checkout">
     <div class="container">
         <div class="row"> 
             <div class="col-md-12">
-                <div class="checkout-area">
+                <div class="checkout-area"> 
                     
-                    <form action="{{ route('cart.placeOrder') }}" method="POST"> 
+                    <form action="{{ route('cart.placeOrder') }}" method="POST" id = "payment-form"> 
                         @csrf
                         <div class="row">
                             <div class="col-md-6">
@@ -72,6 +72,20 @@
                                             </tfoot>
                                         </table>
                                     </div>
+                                    <h4>Payment Method</h4>
+                                        <div class="aa-payment-method">                    
+                                            <label for="cashdelivery"><input type="radio" id="cashdelivery" name="payment_method" value="cash"> Cash on Delivery </label>
+                                            <label for="stripe">
+                                                <input type="radio" id="stripe" name="payment_method" value="stripe"> Credit or Debit Card
+                                            </label>
+                                        </div>
+
+                                        <div id="card-element" class="form-control">
+                                            <!-- A Stripe Element will be inserted here. -->
+                                        </div>
+
+                                        <!-- Used to display form errors. -->
+                                        <div id="card-errors" role="alert"></div>
                                     <input type="hidden" name="total" value="{{ $total }}">
                                     <button type="submit" class="aa-browse-btn">Place Order</button>
                                 </div>
@@ -84,4 +98,60 @@
         </div>
     </div>
 </section>
+@endsection
+
+@section('scripts')
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function(){
+            var stripe = Stripe('{{ env('STRIPE_KEY') }}');
+            var elements = stripe.elements();
+            var style = {
+                base: {
+                    color: "#32325d",
+                    fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                    fontSmoothing: "antialiased",
+                    fontSize: "16px",
+                    "::placeholder": {
+                        color: "#aab7c4"
+                    }
+                },
+                invalid: {
+                    color: "#fa755a",
+                    iconColor: "#fa755a"
+            }
+        };
+        var card = elements.create("card", {style: style});
+        card.mount("#card-element");
+        card.addEventListener('change', function(event){
+            var displayError = document.getElementById('card-errors');
+            if(event.error){
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+        var form = document.getElementById('payment-form');
+        form.addEventListener('submit', function(event){
+            event.preventDefault();
+            stripe.createToken(card).then(function (result){
+                if(result.error) {
+                    var errorElement = document.getElementById('card-errors');
+                    errorElement.textContent = result.error.message;
+                } else {
+                stripeTokenHandler(result.token);
+                }
+            });
+        });
+        function stripeTokenHandler(token){
+            var form = document.getElementById('payment-form');
+            var hiddenInput = document.createElement('input');
+            hiddenInput.setAttribute('type', 'hidden');
+            hiddenInput.setAttribute('name', 'stripeToken');
+            hiddenInput.setAttribute('value', token.id);
+            form.appendChild(hiddenInput);
+            form.submit();
+        }
+    });
+    </script>
 @endsection

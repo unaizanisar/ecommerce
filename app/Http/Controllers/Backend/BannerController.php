@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\Banner;
 use Illuminate\Support\Facades\Validator;
 use App\Interfaces\BannerRepositoryInterface;
- 
+use App\Http\Requests\BannerSaveRequest;
+use App\Http\Requests\BannerUpdateRequest;
+
 
 class BannerController extends Controller
 {
@@ -35,20 +37,12 @@ class BannerController extends Controller
         }
         return view('backend.banners.create');
     }
-    public function store(Request $request)
+    public function store(BannerSaveRequest $request)
     {
         if (!auth()->user()->hasPermission('Banner Add')) {
             return redirect()->route('banners.index')->with('error', 'You do not have permission to Add New Banner!');
         }
-        $validator = Validator::make($request->all(), [
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',  
-            'description' => 'required|string|max:255',
-            'btn_text' => 'required|string|max:255',
-            'btn_link' => 'required|string|max:255',
-        ]);
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
+        
         $data = $request->all();
         if ($request->hasFile('image')) {
             $file = $request->file('image');
@@ -72,17 +66,12 @@ class BannerController extends Controller
         $banner = $this->bannerRepository->getBannerById($id);
         return view('backend.banners.edit', compact('banner'));
     }
-    public function update(Request $request, $id)
+    public function update(BannerUpdateRequest $request, $id)
     {
         if (!auth()->user()->hasPermission('Banner Edit')) {
             return redirect()->route('banners.index')->with('error', 'You do not have permission to Edit Banner!');
         }
-        $validatedData = $request->validate([
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
-            'description' => 'required|string|max:255',
-            'btn_text' => 'required|string|max:255',
-            'btn_link' => 'required|string|max:255',
-        ]);
+
         $banner = $this->bannerRepository->getBannerById($id);
 
         $data = $request->all();

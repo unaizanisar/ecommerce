@@ -13,19 +13,18 @@ class CategoryRepository implements CategoryRepositoryInterface
     }
     public function getCategoryById($id)
     {
-        return Category::findOrFail($id);
+        return Category::findOrFail($id); 
     }
     public function createCategory(array $data)
     {
-        $category = new Category();
-        $category->name = $data['name'];
-        $category->description = $data['description'];
-        if (isset($data['image'])) {
-            $category->image = $data['image'];
-        }
-        $category->save();
-        return $category;
+        return Category::create($data);
     } 
+    public function updateCategory($id, array $data)
+    {
+        $category = Category::findOrFail($id);
+        $category->update($data);
+        return $category;
+    }
     public function deleteCategory($id)
     {
         $category = Category::findOrFail($id);
@@ -42,17 +41,7 @@ class CategoryRepository implements CategoryRepositoryInterface
         $category->save();
         return $category;
     }
-    public function updateCategory($id, array $data)
-    {
-        $category = Category::findOrFail($id);
-        $category->name = $data['name'];
-        $category->description = $data['description'];
-        if (isset($data['image'])) {
-            $category->image = $data['image'];
-        }
-        $category->save();
-        return $category;
-    }
+
     public function updateCategoryHome($id, $is_home)
     {
         $category = Category::findOrFail($id);

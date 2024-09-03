@@ -20,7 +20,7 @@
                 <p data-seq>{{ $banner->description }}</p>
                 <a data-seq href="{{ $banner->btn_link }}" class="aa-shop-now-btn aa-secondary-btn">{{ $banner->btn_text }}</a>
               </div>
-            </li>
+            </li> 
             @endforeach
           </ul>
         </div>

@@ -20,6 +20,7 @@ class Order extends Model
         'address',
         'phone',
         'status',
+        'payment_method',
     ]; 
 
     public function orderItems()

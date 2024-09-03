@@ -38,19 +38,18 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script> 
     <![endif]-->
     <style>
-      /* Custom styling for the order tracking result section */
   .custom-track-result {
       display: flex;
       align-items: center;
       justify-content: center;
       min-height: 80vh;
-      background-color: #f8f9fa; /* Light background color for contrast */
+      background-color: #f8f9fa;
       padding: 20px;
   }
   
   .custom-track-result .card {
-      border-radius: 8px; /* Rounded corners for the card */
-      border: 1px solid #dee2e6; /* Light border for the card */
+      border-radius: 8px; 
+      border: 1px solid #dee2e6;
   }
   
  
@@ -59,8 +58,8 @@
   }
   
   .custom-track-result .card-footer {
-      background-color: #f1f1f1; /* Slightly different background for the footer */
-      border-top: 1px solid #dee2e6; /* Border at the top of the footer */
+      background-color: #f1f1f1; 
+      border-top: 1px solid #dee2e6; 
   }
   
     </style>
@@ -86,12 +85,6 @@
           <div class="col-md-12">
             <div class="aa-header-top-area">
               <div class="aa-header-top-right">
-                <ul class="aa-head-top-nav-right">
-                  <li><a href="account.html">My Account</a></li>
-                  <li class="hidden-xs"><a href="{{ route('cart') }}">My Cart</a></li>
-                  <li class="hidden-xs"><a href="{{ route('cart.checkout') }}">Checkout</a></li>
-                  <li><a href="" data-toggle="modal" data-target="#login-modal">Login</a></li>
-                </ul>
               </div>
             </div>
           </div>
@@ -112,6 +105,7 @@
                   <span class="far fa-gem"></span>
                   <p>Jay's<strong>Jewellery</strong> <span>Elegance your way!</span></p>
                 </a>
+                <a href = "{{ route('order.track') }}" class = "btn btn-sm btn-primary" style="font-size: 12px; padding: 2px 8px; margin-left:20px;">Track Order</a>
                 <!-- img based logo -->
                 <!-- <a href="index.html"><img src="img/logo.jpg" alt="logo img"></a> -->
               </div>
@@ -121,7 +115,7 @@
   <a class="aa-cart-link" href="{{ route('cart') }}">
       <span class="fa fa-shopping-basket"></span>
       <span class="aa-cart-title">CART</span>
-      <span class="aa-cart-notify">{{ count(session('cart', [])) }}</span> <!-- Cart item count -->
+      <span class="aa-cart-notify">{{ count(session('cart', [])) }}</span>
   </a>
   <div class="aa-cartbox-summary">
       @if(session('cart') && count(session('cart')) > 0)
@@ -151,6 +145,7 @@
       @endif
   </div>
 </div>
+
 <!-- / cart box -->
         <!-- search box -->
         <div class="aa-search-box">
@@ -160,7 +155,6 @@
           </form>
         </div>
         <!-- / search box -->
-     
             </div>
           </div>
         </div>
@@ -426,5 +420,6 @@
   <!-- Custom js -->
   <script src="{{ asset('frontend/js/custom.js')}}"></script> 
   @stack('scripts')
+  @yield('scripts')
   </body>
 </html>

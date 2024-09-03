@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Interfaces\ProductRepositoryInterface;
 use App\Interfaces\CategoryRepositoryInterface; 
+use App\Http\Requests\ProductSaveRequest;
+use App\Http\Requests\ProductUpdateRequest;
+
 
 class ProductController extends Controller
 {
@@ -35,22 +38,12 @@ class ProductController extends Controller
         return view('backend.product.create', compact('categories'));
     }
 
-    public function store(Request $request)
+    public function store(ProductSaveRequest $request)
     {
         if (!auth()->user()->hasPermission('Product Add')) {
             return redirect()->route('products.index')->with('error', 'You do not have permission to Add Product!');
         }
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'description' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'images' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'category_id' => 'required|exists:categories,id',
-        ]);
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
+        
         $data = $request->all();
         if ($request->hasFile('images')) {
             $file = $request->file('images');
@@ -87,19 +80,12 @@ class ProductController extends Controller
         return view('backend.product.edit', compact('product', 'categories'));
     }
 
-    public function update(Request $request, $id)
+    public function update(ProductUpdateRequest $request, $id)
     {
         if (!auth()->user()->hasPermission('Product Edit')) {
             return redirect()->route('products.index')->with('error', 'You do not have permission to Edit Product!');
         }
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'images' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'category_id' => 'required|exists:categories,id',
-        ]);
+
         $product = $this->productRepository->getProductById($id);
 
         $data = $request->all();
