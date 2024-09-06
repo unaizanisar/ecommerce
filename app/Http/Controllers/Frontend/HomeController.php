@@ -9,8 +9,9 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Product;
 use App\Models\Review;
 use App\Models\Subscription;
-
-
+use App\Models\Order;
+use App\Models\Customer;
+use Illuminate\Support\Facades\Auth;
 class HomeController extends Controller
 {
     public function index(Request $request)
@@ -72,8 +73,6 @@ public function show($id)
 {
     $query = DB::table('products')
         ->where('status', 1);
-
-    // Apply sorting
     $sortBy = $request->input('sort', 'id'); // Default to sorting by 'id'
     $sortOrder = $request->input('order', 'desc'); // Default to 'desc'
 
@@ -101,11 +100,55 @@ public function show($id)
     return view('frontend.frontend.products', compact('products', 'categories'));
 }
 
-public function contact()
-{
-    return view('frontend.frontend.contact');
+    public function contact()
+    {
+        return view('frontend.frontend.contact');
+    }
+
+    public function account()
+    {
+        return view('frontend.frontend.account');
+    }
+
+    public function orderDetails()
+    {
+        $customer = auth()->guard('customer')->user();
+        $orders = Order::where('customer_id', $customer->id)->get();
+        return view('frontend.frontend.order_details', compact('orders'));
+    }
+
+    public function profile()
+    {
+        $customer = Auth::user();
+        return view('frontend.frontend.profile',compact('customer'));
+    }
+    public function updateProfile(Request $request)
+    {
+        $customer = auth()->user();
+        $request->validate([
+            'firstname' => 'required|string|max:255',
+            'lastname' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'password' => 'nullable|min:8',
+            'address' => 'required|string|max:255',
+            'city' => 'required|string|max:255',
+            'state' => 'required|string|max:255',
+            'country' => 'nullable|string|max:255',
+            'postal_code' => 'required|string|max:10',
+        ]);
+        $customer->firstname = $request->firstname;
+        $customer->lastname = $request->lastname;
+        $customer->email = $request->email;
+        $customer->address = $request->address;
+        $customer->city = $request->city;
+        $customer->state = $request->state;
+        $customer->country = $request->country;
+        $customer->postal_code = $request->postal_code;
+        if ($request->filled('password')) {
+            $customer->password = bcrypt($request->password); 
+        }
+        $customer->save();
+        return redirect()->back()->with('success', 'Profile updated successfully!');
+    }
 }
 
-
-
-}

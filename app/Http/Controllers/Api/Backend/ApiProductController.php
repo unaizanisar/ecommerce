@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Interfaces\ProductRepositoryInterface;
 use App\Interfaces\CategoryRepositoryInterface;
+use App\Http\Requests\ProductStoreRequest;
+use App\Http\Requests\ProductUpdateRequest;
 
 class ApiProductController extends Controller
 {
@@ -31,21 +33,9 @@ class ApiProductController extends Controller
         }
         return response()->json($product, 200);
     }
-    public function store(Request $request)
+    public function store(ProductStoreRequest $request)
     {
         try{
-            $validator = Validator::make($request->all(),[
-                'name' => 'required|string|max:255',
-                'description' => 'required|string|max:255',
-                'price' => 'required|numeric|min:0',
-                'stock' => 'required|numeric|min:0',
-                'images' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'category_id' => 'required|exists:categories,id',
-            ]);
-            if($validator->fails())
-            {
-                return response()->json(['errors' => $validator->errors()], 422);
-            }
             $data = $request->all();
             if ($request->hasFile('images')) {
                 $file = $request->file('images');
@@ -64,25 +54,14 @@ class ApiProductController extends Controller
             return response()->json(['error' => 'An error occurred while creating the product', 'message' => $e->getMessage()], 500);
         }
     }
-    public function update($id, Request $request)
+    public function update($id, ProductUpdateRequest $request)
     {
         try {
-            $validatedData = $request->validate([
-                'name' => 'required|string|max:255',
-                'description' => 'required|string|max:255',
-                'price' => 'required|numeric|min:0',
-                'stock' => 'required|numeric|min:0',
-                'images' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'category_id' => 'required|exists:categories,id',
-            ]);
-
             $product = $this->productRepository->getProductById($id);
             if (!$product) {
                 return response()->json(['error' => 'Product not found'], 404);
             }
-
-            $data = $validatedData;
-
+            $data = $request->all();
             if ($request->hasFile('images')) {
                 $file = $request->file('images');
                 if ($file->isValid()) {

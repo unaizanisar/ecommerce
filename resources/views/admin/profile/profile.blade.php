@@ -20,7 +20,7 @@
                             <p>{{ $profile->email }}</p>
                             <a href="#" 
                                 style="color:#333; text-decoration:none; font-weight:bold;" 
-                                onmouseover="this.style.color='#333';" 
+                                onmouseover="this.style.color='#333';"  
                                 onmouseout="this.style.color='#333';">
                                 <i class="fa fa-user"></i> Profile
                             </a> <br>

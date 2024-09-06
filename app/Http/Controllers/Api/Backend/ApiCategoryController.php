@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Category;
 use Illuminate\Support\Facades\Validator;
 use App\Interfaces\CategoryRepositoryInterface;
+use App\Http\Requests\CategorySaveRequest;
+use App\Http\Requests\CategoryUpdateRequest;
 
 class ApiCategoryController extends Controller
 {
@@ -34,18 +36,8 @@ class ApiCategoryController extends Controller
         return response()->json(['category' => $category], 200);
     }
 
-    public function store(Request $request)
+    public function store(CategorySaveRequest $request)
     {
-        $validator = Validator::make($request->all(),[
-            'name' => 'required|string|max:255',
-            'description' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
         $data = $request->all();
         if ($request->hasFile('image')) {
             $file = $request->file('image');
@@ -57,29 +49,15 @@ class ApiCategoryController extends Controller
                 return response()->json(['error' => 'Uploaded file is not valid'], 422);
             }
         }
-
         $category = $this->categoryRepository->createCategory($data);
         return response()->json(['category' => $category, 'message' => 'Category created successfully'], 201);
     }
-
-    public function update(Request $request, $id)
+    public function update(CategoryUpdateRequest $request, $id)
     {
-        $validator = Validator::make($request->all(),[
-            'name' => 'required|string|max:255',
-            'description' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
         $category = $this->categoryRepository->getCategoryById($id);
-
         if (!$category) {
             return response()->json(['error' => 'Category not found'], 404);
         }
-
         $data = $request->all();
         if ($request->hasFile('image')) {
             $file = $request->file('image');

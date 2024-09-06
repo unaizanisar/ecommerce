@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Interfaces\PermissionRepositoryInterface;
+use App\Http\Requests\PermissionSaveRequest;
+use App\Http\Requests\PermissionUpdateRequest;
 
 class ApiPermissionController extends Controller
 {
@@ -28,17 +30,9 @@ class ApiPermissionController extends Controller
         }
         return response()->json($permission, 200);
     }
-    public function store(Request $request)
+    public function store(PermissionSaveRequest $request)
     {
         try{ 
-            $validator = Validator::make($request->all(),[
-                'name' => 'required|string|max:255',
-                'module' => 'required|string|max:255',
-            ]);
-            if($validator->fails())
-            {
-                return response()->json(['error'=>$validator->errors()], 422);
-            }
             $data = $request->all();
             $permission = $this->permissionRepository->createPermission($data);
             return response()->json(['permission'=> $permission ,'message'=>'Permission created successfully'], 201);
@@ -46,19 +40,15 @@ class ApiPermissionController extends Controller
             return response()->json(['error'=>'An error occured while creating permission', 'message'=>$e->getMessage()], 500);
         }
     }
-    public function update(Request $request, $id)
+    public function update(PermissionUpdateRequest $request, $id)
     {
         try{
-            $validatedData = $request->validate([
-                'name'=>'required|string|max:255',
-                'module'=>'required|string|max:255',
-            ]);
             $permission = $this->permissionRepository->getPermissionById($id);
             if(!$permission)
             {
                 return response()->json(['error'=>'Permission not found'], 404);
             }
-            $data = $validatedData;
+            $data = $request->all();
             $this->permissionRepository->updatePermission($id, $data);
             return response()->json(['message'=>'Permission updated successfully'], 200);
         } catch (\Exception $e) {

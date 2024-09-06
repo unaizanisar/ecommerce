@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class ModifyTrackingIdColumnInOrdersTable extends Migration
+class AddTrackingIdToOrdersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class ModifyTrackingIdColumnInOrdersTable extends Migration
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->string('tracking_id')->nullable()->change();
+            $table->string('tracking_id')->after('phone')->nullable();
         });
     }
 
@@ -27,7 +27,6 @@ class ModifyTrackingIdColumnInOrdersTable extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             $table->dropColumn('tracking_id');
-            
         });
     }
 }

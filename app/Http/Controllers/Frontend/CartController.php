@@ -72,72 +72,71 @@ class CartController extends Controller
     }
     
     public function placeOrder(Request $request)
-    {
+{
+    $request->validate([
+        'firstname' => 'required|string',
+        'lastname' => 'required|string',
+        'email'  => 'required|string',
+        'phone' => 'required|string',
+        'address' => 'required|string',
+        'city' => 'required|string',
+        'postal_code' => 'required|string',
+        'total' => 'required|numeric',
+        'payment_method' => 'required|string',
+    ]);
+
+    if ($request->payment_method === 'stripe') {
         $request->validate([
-            'firstname' => 'required|string',
-            'lastname' => 'required|string',
-            'email'  => 'required|string',
-            'phone' => 'required|string',
-            'address' => 'required|string',
-            'city' => 'required|string',
-            'postal_code' => 'required|string',
-            'total' => 'required|numeric',
-            'payment_method' => 'required|string',
+            'stripeToken' => 'required|string',
         ]);
 
-        if ($request->payment_method === 'stripe') {
-            $stripeToken = $request->input('stripeToken');
+        \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
 
-            if (!$stripeToken) {
-                return redirect()->back()->with('error', 'Payment error! Please try again.');
-            }
-
-            \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
-
-            try {
-                $charge = \Stripe\Charge::create([
-                    'amount' => $request->total * 100,
-                    'currency' => 'usd',
-                    'description' => 'Order Payment',
-                    'source' => $stripeToken,
-                ]);
-            } catch (\Exception $e) {
-                return redirect()->back()->with('error', $e->getMessage());
-            }
-        }
-
-        $trackingID = 'PKJ' . strtoupper(uniqid());
-        $order = new Order();
-
-        if (auth()->check()) {
-            $order->user_id = auth()->user()->id;
-        }
-
-        $order->firstname = $request->firstname;
-        $order->lastname = $request->lastname;
-        $order->email = $request->email;
-        $order->city = $request->city;
-        $order->postal_code = $request->postal_code;
-        $order->total = $request->total;
-        $order->address = $request->address;
-        $order->phone = $request->phone;
-        $order->tracking_id = $trackingID;
-        $order->payment_method = $request->payment_method; 
-
-        $order->save();
-
-        foreach (session('cart') as $id => $details) {
-            $order->orderItems()->create([
-                'product_id' => $id,
-                'quantity' => $details['quantity'],
-                'price' => $details['price'],
+        try {
+            $charge = \Stripe\Charge::create([
+                'amount' => $request->total * 100,
+                'currency' => 'usd',
+                'description' => 'Order Payment',
+                'source' => $request->stripeToken,
             ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
         }
-
-        session()->forget('cart');
-
-        return redirect()->route('order.done')->with('trackingID', $trackingID)->with('success', 'Your order has been placed successfully!');
     }
+
+    $trackingID = 'PKJ' . strtoupper(uniqid());
+    $order = new Order();
+
+    if (auth()->check()) {
+        $order->user_id = auth()->user()->id;
+    }
+
+    $order->firstname = $request->firstname;
+    $order->lastname = $request->lastname;
+    $order->email = $request->email;
+    $order->city = $request->city;
+    $order->postal_code = $request->postal_code;
+    $order->total = $request->total;
+    $order->address = $request->address;
+    $order->phone = $request->phone;
+    $order->tracking_id = $trackingID;
+    $order->payment_method = $request->payment_method;
+
+    $order->save();
+
+    foreach (session('cart') as $id => $details) {
+        $order->orderItems()->create([
+            'product_id' => $id,
+            'quantity' => $details['quantity'],
+            'price' => $details['price'],
+        ]);
+    }
+
+    session()->forget('cart');
+
+    return redirect()->route('order.done')->with('trackingID', $trackingID)->with('success', 'Your order has been placed successfully!');
+}
+
 
     public function showTrackForm()
     {

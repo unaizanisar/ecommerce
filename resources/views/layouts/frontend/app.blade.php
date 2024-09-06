@@ -78,20 +78,40 @@
   <!-- END SCROLL TOP BUTTON -->
   <!-- Start header section -->
   <header id="aa-header">
-    <!-- start header top  -->
-    <div class="aa-header-top">
-      <div class="container">
-        <div class="row">
+   <!-- in your main header view file -->
+<!-- start header top  -->
+<div class="aa-header-top">
+  <div class="container">
+      <div class="row">
           <div class="col-md-12">
-            <div class="aa-header-top-area">
-              <div class="aa-header-top-right">
+              <div class="aa-header-top-area">
+                  <div class="aa-header-top-right">
+                      <ul class="aa-head-top-nav-right">
+                          <li><a href="{{ route('account') }}">My Account</a></li>
+                          <li class="hidden-xs"><a href="{{ route('cart') }}">My Cart</a></li>
+                          <li class="hidden-xs"><a href="{{ route('cart.checkout') }}">Checkout</a></li>
+                          @guest('customer')
+                              <li><a href="" data-toggle="modal" data-target="#login-modal">Login</a></li>
+                              {{-- <li><a href="{{ route('customer.login.form') }}">Login</a></li> --}}
+                              {{-- <li><a href="{{ route('customer.register') }}">Register</a></li> --}}
+                          @else
+                              <li class="hidden-xs"><a href="{{ route('customer.order.details') }}">Order Details</a></li>
+                              <li class="hidden-xs"><a href="{{ route('customer.profile') }}"><i class = "fa fa-user"></i> Profile</a></li>
+                              <li>
+                                  <form action="{{ route('customer.logout') }}" method="POST" style="display:inline;">
+                                      @csrf
+                                      <button type="submit" class="btn btn-link">Logout</button>
+                                  </form>
+                              </li>
+                          @endguest
+                      </ul>
+                  </div>
               </div>
-            </div>
           </div>
-        </div>
       </div>
-    </div>
-    <!-- / header top  -->
+  </div>
+</div>
+<!-- / header top  -->
     <!-- start header bottom  -->
     <div class="aa-header-bottom">
       <div class="container">
@@ -198,7 +218,7 @@
               <div class="aa-support-single">
                 <span class="fa fa-truck"></span>
                 <h4>FREE SHIPPING</h4>
-                <P>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quam, nobis.</P>
+                <P>Globlly free shipping available.</P>
               </div>
             </div>
             <!-- single support -->
@@ -206,7 +226,7 @@
               <div class="aa-support-single">
                 <span class="fa fa-clock-o"></span>
                 <h4>30 DAYS MONEY BACK</h4>
-                <P>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quam, nobis.</P>
+                <P>Money back guaranteed.</P>
               </div>
             </div>
             <!-- single support -->
@@ -214,7 +234,7 @@
               <div class="aa-support-single">
                 <span class="fa fa-phone"></span>
                 <h4>SUPPORT 24/7</h4>
-                <P>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quam, nobis.</P>
+                <P>24hrs assistance available.</P>
               </div>
             </div>
           </div>
@@ -371,36 +391,39 @@
       </div>
     </div>
   </footer>
-  <!-- / footer -->
-
-  <!-- Login Modal -->  
+  <!-- / footer --> 
   <div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-      <div class="modal-content">                      
-        <div class="modal-body">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h4>Login or Register</h4>
-          <form class="aa-login-form" action="">
-            <label for="">Username or Email address<span>*</span></label>
-            <input type="text" placeholder="Username or email">
-            <label for="">Password<span>*</span></label>
-            <input type="password" placeholder="Password">
-            <button class="aa-browse-btn" type="submit">Login</button>
-            <label for="rememberme" class="rememberme"><input type="checkbox" id="rememberme"> Remember me </label>
-            <p class="aa-lost-password"><a href="#">Lost your password?</a></p>
-            <div class="aa-register-now">
-              Don't have an account?<a href="account.html">Register now!</a>
-            </div>
-          </form>
-        </div>                        
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div>    
+        <div class="modal-content">                      
+            <div class="modal-body">
+                <button type="button" id="loginForm" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4>Login or Register</h4>
+                <form  class="aa-login-form" action="{{ url('/customer/login') }}" method="POST">
+                  @csrf
+                  <label for="email">Email<span>*</span></label>
+                  <input type="text" name="email" placeholder="Email" required>
+                    <p class="text-danger" id="email-error"></p>
+                  <label for="password">Password<span>*</span></label>
+                  <input type="password" name="password" placeholder="Password" required>
+                    <p class="text-danger" id="password-error"></p>
+                  <button class="aa-browse-btn" type="submit">Login</button>
+                  <label for="rememberme" class="rememberme">
+                      <input type="checkbox" id="rememberme" name="remember"> Remember me 
+                  </label>
+                  <div class="aa-register-now">
+                      Don't have an account? <a href="{{ route('customer.register') }}">Register now!</a>
+                  </div>
+              </form>
+            </div>                        
+        </div>
+    </div>
+</div>
 
   <!-- jQuery library -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <!-- Toastr JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
   <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script src="{{ asset('frontend/js/bootstrap.js')}}"></script>  
   <!-- SmartMenus jQuery plugin -->
@@ -419,7 +442,49 @@
   <script type="text/javascript" src="{{ asset('frontend/js/nouislider.js')}}"></script>
   <!-- Custom js -->
   <script src="{{ asset('frontend/js/custom.js')}}"></script> 
+  <script>
+    $(document).ready(function() {
+        $('.aa-login-form').on('submit', function(event) {
+            event.preventDefault(); 
+            $('#email-error').text('');
+            $('#password-error').text('');
+            let formData = {
+                email: $('input[name="email"]').val(),
+                password: $('input[name="password"]').val(),
+                remember: $('input[name="remember"]').is(':checked') ? 1 : 0,
+                _token: $('input[name="_token"]').val()
+            };
+            console.log("Form data:", formData); 
+            $.ajax({
+                url: $(this).attr('action'),  
+                method: 'POST',
+                data: formData,
+                success: function(response) {
+                    if (response.success) {
+                        console.log("Login successful! Redirecting...");
+                        window.location.href = response.redirect; 
+                    }
+                },
+                error: function(xhr) {
+                    console.log("Error:", xhr); 
+                    let errors = xhr.responseJSON.errors;
+                    if (errors) {
+                        if (errors.email) {
+                            $('#email-error').text(errors.email[0]);
+                        }
+                        if (errors.password) {
+                            $('#password-error').text(errors.password[0]);
+                        }
+                    } else {
+                        $('#email-error').text('An unexpected error occurred. Please try again.');
+                    }
+                }
+            });
+        });
+    });
+  </script>
   @stack('scripts')
   @yield('scripts')
   </body>
 </html>
+

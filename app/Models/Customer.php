@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Customer extends Model
+class Customer extends Authenticatable
 {
-    use HasFactory;
-    protected $table = 'customers';
+    use HasFactory, Notifiable;
+    // protected $table = 'customers';
     protected $fillable = [
         'firstname',
         'lastname',
@@ -23,5 +24,15 @@ class Customer extends Model
         'gender',
         'status',
     ];
+    protected $hidden = [
+        'password', 'remember_token',
+    ];
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+    // public function setPasswordAttribute($password)
+    // {
+    //     $this->attributes['password'] = bcrypt($password);
+    // }
 }
- 

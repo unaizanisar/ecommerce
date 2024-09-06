@@ -16,8 +16,14 @@ use App\Http\Controllers\Frontend\PaymentController;
 use App\Http\Controllers\Frontend\ReviewController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\ProductController as FrontendProductController;
+use App\Http\Controllers\Auth\CustomerAuthController;
 
-
+// Login and Registration Routes
+Route::get('/customer/login', [CustomerAuthController::class, 'showLoginForm'])->name('customer.login.form');
+Route::post('/customer/login', [CustomerAuthController::class, 'login'])->name('customer.login');
+Route::get('/customer/register', [CustomerAuthController::class, 'showRegistrationForm'])->name('customer.register');
+Route::post('/customer/register', [CustomerAuthController::class, 'register']);
+Route::post('/customer/logout', [CustomerAuthController::class, 'logout'])->name('customer.logout');
 
 // Public routes
 Route::get('/', function () {
@@ -94,6 +100,9 @@ Route::post('product/{id}/review', [App\Http\Controllers\Frontend\HomeController
 Route::get('view_products', [App\Http\Controllers\Frontend\HomeController::class, 'viewProducts'])->name('product.viewProducts');
 Route::get('/contact',[App\Http\Controllers\Frontend\HomeController::class, 'contact'])->name('contact');
 
+Route::get('/account',[App\Http\Controllers\Frontend\HomeController::class, 'account'])->name('account');
+
+
 Route::get('/cart', [App\Http\Controllers\Frontend\CartController::class, 'index'])->name('cart');
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 Route::get('/cart/decrease/{id}', [CartController::class, 'decrease'])->name('cart.decrease');
@@ -115,3 +124,9 @@ Route::get('/search', [FrontendProductController::class, 'search'])->name('searc
 
 Route::get('/payment',[PaymentController::class, 'index']);
 Route::get('/review',[ReviewController::class, 'index']);
+
+Route::middleware('auth:customer')->group(function () {
+    Route::get('/customer/order_details', [HomeController::class, 'orderDetails'])->name('customer.order.details');
+    Route::get('/customer/profile', [HomeController::class, 'profile'])->name('customer.profile');
+    Route::post('/customer/profile',[HomeController::class, 'updateProfile'])->name('customer.updateProfile');
+});

@@ -42,7 +42,7 @@
                             <div class="aa-product-catg-pagination">
                                 {{ $products->links() }}
                             </div>
-                        @endif
+                        @endif 
                     </div>
                 </div>
             </div>
@@ -55,4 +55,5 @@
         toastr.success("{{ session('success') }}");
     });
 </script>
+@endif
 @endsection

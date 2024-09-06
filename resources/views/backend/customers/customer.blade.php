@@ -22,7 +22,6 @@
                 <th>State</th>
                 <th>Postal Code</th>
                 <th>Country</th>
-                <th>Gender</th>
                 <th>Status</th>
                 <th>Action</th>
             </tr>
@@ -40,7 +39,6 @@
                 <td>{{ $customer->state }}</td>
                 <td>{{ $customer->postal_code }}</td>
                 <td>{{ $customer->country }}</td>
-                <td>{{ $customer->gender }}</td>
                 <td>
                     @if($customer->status == 1)
                         <span class="badge badge-success">Active</span>

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Interfaces\BannerRepositoryInterface;
+use App\Http\Requests\BannerSaveRequest;
+use App\Http\Requests\BannerUpdateRequest;
 
 class ApiBannerController extends Controller
 {
@@ -30,19 +32,9 @@ class ApiBannerController extends Controller
         }
         return response()->json($banner, 200);
     }
-    public function store(Request $request)
+    public function store(BannerSaveRequest $request)
     {
         try{
-            $validator = Validator::make($request->all(),[
-                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',  
-                'description' => 'required|string|max:255',
-                'btn_text' => 'required|string|max:255',
-                'btn_link' => 'required|string|max:255',
-            ]);
-            if($validator->fails())
-            {
-                return response()->json($validator->errors(), 422);
-            }
             $data = $request->all();
             if($request->hasFile('image'))
             {
@@ -61,16 +53,9 @@ class ApiBannerController extends Controller
             return response()->json(['error'=>'An error occured while creating banner', 'message'=>$e->getMessage()], 500);
         }
     }
-    public function update($id, Request $request)
+    public function update($id, BannerUpdateRequest $request)
     {
         try{
-            $validatedData = $request->validate([
-                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',  
-                'description' => 'required|string|max:255',
-                'btn_text' => 'required|string|max:255',
-                'btn_link' => 'required|string|max:255',
-            ]);
-
             $data = $request->all();
             if ($request->hasFile('image')) {
                 $file = $request->file('image');

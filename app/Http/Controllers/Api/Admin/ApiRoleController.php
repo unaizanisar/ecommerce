@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Interfaces\RoleRepositoryInterface; 
 use App\Interfaces\PermissionRepositoryInterface;
+use App\Http\Requests\RoleSaveRequest;
+use App\Http\Requests\RoleUpdateRequest;
 
 class ApiRoleController extends Controller
 {
@@ -35,19 +37,9 @@ class ApiRoleController extends Controller
         }
         return response()->json($role, 200);
     }
-    public function store(Request $request)
+    public function store(RoleSaveRequest $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'name' => 'required|string|max:255|unique:roles',
-                'permissions' => 'array',
-                'permissions.*' => 'exists:permissions,id', 
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json(['error' => $validator->errors()], 422);
-            }
-
             $data = $request->all();
             $role = $this->roleRepository->createRole($data);
             $this->roleRepository->roleHasPermissions($role->id, $request->input('permissions', []));
@@ -57,20 +49,15 @@ class ApiRoleController extends Controller
             return response()->json(['error' => 'An error occurred while creating the role', 'message' => $e->getMessage()], 500);
         }
     }
-    public function update(Request $request, $id)
+    public function update(RoleUpdateRequest $request, $id)
     {
         try{
-            $validatedData = $request->validate([
-                'name' => 'required|string|max:255|unique:roles,name,'.$id,
-                'permissions' => 'array',
-                'permissions.*' => 'exists:permissions,id',
-            ]);
             $role = $this->roleRepository->getRoleById($id);
             if(!$role)
             {
                 return response()->json(['error', 'Role not found'], 404);
             }
-            $this->roleRepository->updateRole($id, $validatedData);
+            $this->roleRepository->updateRole($id, $request->all());
             $this->roleRepository->roleHasPermissions($role->id, $request->input('permissions',[]));
             return response()->json([
                 'message'=>'Role updated successfully',

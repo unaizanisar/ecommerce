@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Interfaces\UserRepositoryInterface;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\UserSaveRequest;
+use App\Http\Requests\UserUpdateRequest;
 
 class ApiUserController extends Controller
 {
@@ -28,23 +30,9 @@ class ApiUserController extends Controller
         }
         return response()->json($user, 200);
     }
-    public function store(Request $request)
+    public function store(UserSaveRequest $request)
     {
         try{
-            $validator = Validator::make($request->all(),[
-                'firstname' => 'required|string|max:255', 
-                'lastname' => 'required|string|max:255',
-                'email' => 'required|email|max:255|unique:users',
-                'password' => 'required|string|min:8',
-                'address' => 'required|string|max:255',
-                'phone' => 'required|numeric|unique:users|digits:11',
-                'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
-                'role_id' => 'required|exists:roles,id',
-            ]);
-            if($validator->fails())
-            {
-                return response()->json($validator->errors(), 422);
-            }
             $data = $request->all();
             if($request->hasFile('profile_photo'))
             {
@@ -64,20 +52,9 @@ class ApiUserController extends Controller
             return response()->json(['error'=>'An error occured while creating user', 'message'=>$e->getMessage()], 500);
         }
     }
-    public function update($id, Request $request)
+    public function update($id, UserUpdateRequest $request)
     {
         try{
-            $validatedData = $request->validate([
-                'firstname' => 'required|string|max:255',
-                'lastname' => 'required|string|max:255',
-                'email' => 'required|email|max:255|unique:users,email,' . $id,
-                'password' => 'nullable|string|min:8',
-                'address' => 'required|string|max:255',
-                'phone' => 'required|numeric|unique:users,phone,' . $id . '|digits:11',
-                'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-                'role_id' => 'required|exists:roles,id',
-            ]);
-
             $data = $request->all();
 
             if ($request->filled('password')) {

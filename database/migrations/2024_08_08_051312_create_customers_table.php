@@ -26,7 +26,7 @@ class CreateCustomersTable extends Migration
             $table->string('postal_code')->nullable();
             $table->string('country')->nullable();
             $table->date('date_of_birth')->nullable();
-            $table->enum('gender', ['male', 'female', 'other'])->nullable();
+            $table->enum('gender', ['male', 'female', 'other'])->nullable(); 
             $table->boolean('status')->default(1);
             $table->timestamps();
         });

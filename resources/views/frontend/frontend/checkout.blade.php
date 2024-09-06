@@ -72,20 +72,25 @@
                                             </tfoot>
                                         </table>
                                     </div>
+                                    
                                     <h4>Payment Method</h4>
-                                        <div class="aa-payment-method">                    
-                                            <label for="cashdelivery"><input type="radio" id="cashdelivery" name="payment_method" value="cash"> Cash on Delivery </label>
-                                            <label for="stripe">
-                                                <input type="radio" id="stripe" name="payment_method" value="stripe"> Credit or Debit Card
-                                            </label>
-                                        </div>
+                                    <div class="aa-payment-method">
+                                        <label for="cashdelivery">
+                                            <input type="radio" id="cashdelivery" name="payment_method" value="cash" onchange="togglePaymentFields()"> Cash on Delivery
+                                        </label>
+                                        <label for="stripe">
+                                            <input type="radio" id="stripe" name="payment_method" value="stripe" onchange="togglePaymentFields()"> Credit or Debit Card
+                                        </label>
+                                    </div>
 
+                                    <!-- Stripe Payment Fields -->
+                                    <div id="stripe-payment-fields" style="display: none;">
                                         <div id="card-element" class="form-control">
                                             <!-- A Stripe Element will be inserted here. -->
                                         </div>
-
-                                        <!-- Used to display form errors. -->
                                         <div id="card-errors" role="alert"></div>
+                                    </div>
+
                                     <input type="hidden" name="total" value="{{ $total }}">
                                     <button type="submit" class="aa-browse-btn">Place Order</button>
                                 </div>
@@ -101,49 +106,69 @@
 @endsection
 
 @section('scripts')
-    <script src="https://js.stripe.com/v3/"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function(){
-            var stripe = Stripe('{{ env('STRIPE_KEY') }}');
-            var elements = stripe.elements();
-            var style = {
-                base: {
-                    color: "#32325d",
-                    fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-                    fontSmoothing: "antialiased",
-                    fontSize: "16px",
-                    "::placeholder": {
-                        color: "#aab7c4"
-                    }
-                },
-                invalid: {
-                    color: "#fa755a",
-                    iconColor: "#fa755a"
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    function togglePaymentFields() {
+        const paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
+        const stripeFields = document.getElementById('stripe-payment-fields');
+        
+        if (paymentMethod === 'stripe') {
+            stripeFields.style.display = 'block';
+        } else {
+            stripeFields.style.display = 'none';
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        var stripe = Stripe('{{ env('STRIPE_KEY') }}');
+        var elements = stripe.elements();
+        var style = {
+            base: {
+                color: "#32325d",
+                fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                fontSmoothing: "antialiased",
+                fontSize: "16px",
+                "::placeholder": {
+                    color: "#aab7c4"
+                }
+            },
+            invalid: {
+                color: "#fa755a",
+                iconColor: "#fa755a"
             }
         };
+
         var card = elements.create("card", {style: style});
         card.mount("#card-element");
-        card.addEventListener('change', function(event){
+
+        card.addEventListener('change', function(event) {
             var displayError = document.getElementById('card-errors');
-            if(event.error){
+            if (event.error) {
                 displayError.textContent = event.error.message;
             } else {
                 displayError.textContent = '';
             }
         });
+
         var form = document.getElementById('payment-form');
-        form.addEventListener('submit', function(event){
-            event.preventDefault();
-            stripe.createToken(card).then(function (result){
-                if(result.error) {
-                    var errorElement = document.getElementById('card-errors');
-                    errorElement.textContent = result.error.message;
-                } else {
-                stripeTokenHandler(result.token);
-                }
-            });
+        form.addEventListener('submit', function(event) {
+            var paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
+            if (paymentMethod === 'stripe') {
+                event.preventDefault();
+                stripe.createToken(card).then(function(result) {
+                    if (result.error) {
+                        var errorElement = document.getElementById('card-errors');
+                        errorElement.textContent = result.error.message;
+                    } else {
+                        stripeTokenHandler(result.token);
+                    }
+                });
+            } else {
+                form.submit(); // For cash payment, proceed without Stripe
+            }
         });
-        function stripeTokenHandler(token){
+
+        function stripeTokenHandler(token) {
             var form = document.getElementById('payment-form');
             var hiddenInput = document.createElement('input');
             hiddenInput.setAttribute('type', 'hidden');
@@ -153,5 +178,5 @@
             form.submit();
         }
     });
-    </script>
+</script>
 @endsection

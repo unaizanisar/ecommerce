@@ -80,7 +80,7 @@
               </ul>
               <!-- Tab panes -->
               <div class="tab-content">
-                @php
+                {{-- @php
                   $count = 1;  
                 @endphp
                 @foreach($home_categories as $list)
@@ -90,8 +90,8 @@
                   $cat_class = "in active";
                   $count++;
                 }
-                @endphp
-                  <div class="tab-pane fade {{ $cat_class }}" id="{{ $list->id }}">
+                @endphp --}}
+                  <div class="tab-pane fade " id="{{ $list->id }}">
                     <ul class="aa-product-catg">
                       <!-- start single product item -->
                       @if(isset($home_categories_product[$list->id][0]))
@@ -126,7 +126,7 @@
                       @endif 
                     </ul>
                   </div>
-                @endforeach    
+                {{-- @endforeach     --}}
               </div>
             </div>
           </div>
